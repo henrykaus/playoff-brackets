@@ -1,0 +1,35 @@
+________SAMPLE OUTPUT___________
+Who won (Tualatin or West Linn)?
+
+== SECOND ROUND ==
+3 West Linn   <---
+2 Tualatin    <---
+==================
+
+-> 3
+
+__________32 BRACKET____________
+
+32 CENTRAL CA |_____                                                        
+1  JESUIT     |     L_____| 17 WEST SALEM |_____                            
+                    |     | 1  JESUIT     |     |                            
+17 WEST SALEM |_____|                           |                           
+16 FOREST GRO |                                 L_____| 1  JESUIT     |_____
+                                                |     | 17 WEST SALEM |     |
+32 CENTRAL CA |_____                            |                           |
+1  JESUIT     |     L_____| 1  JESUIT     |_____|                           |
+                    |     | 17 WEST SALEM |                                 |
+17 WEST SALEM |_____|                                                       |
+16 FOREST GR  |                                                             L_____| 1  JESUIT     |_____ ...
+                                                                            |     | 17 WEST SALEM |
+32 CENTRAL CA |_____                                                        |
+1  JESUIT     |     L_____| 17 WEST SALEM |_____                            |
+                    |     | 1  JESUIT     |     |                           |
+17 WEST SALEM |_____|                           |                           |
+16 FOREST GRO |                                 L_____| 1  JESUIT     |_____|
+                                                |     | 17 WEST SALEM |
+32 CENTRAL CA |_____                            |
+1  JESUIT     |     L_____| 1  JESUIT     |_____|
+                    |     | 17 WEST SALEM |
+17 WEST SALEM |_____|     
+16 FOREST GR  |
