@@ -4,40 +4,14 @@
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
-//#include <utility>
 #include <cmath>
 #include <fstream>
 #include <stack>
+#include "node.h"
 #include "team.h"
 #include "utils.h"
 
 static const int SIZE_PAIR_PADDING = 18;
-
-class node
-{
-    public:
-        node();
-        node(const node &);
-        node(std::pair<team *, team *>);
-        ~node();
-
-        node & operator = (const node &);
-
-        void set_left(node *);
-        void set_right(node *);
-        void set_pair(team *, team *);
-
-        node *& get_left();
-        node *& get_right();
-        const std::pair<team *, team *> & get_pair() const;
-
-    private:
-        std::pair<team *, team *> spot;
-        node * left;
-        node * right;
-
-        void copy_node(const node &);
-};
 
 class bracket : public utils
 {
@@ -51,11 +25,11 @@ class bracket : public utils
 
         void init_bracket(std::string file_name);
         void draw() const;
+        void decide_winner();
     
     private:
-        node * root;
-        int bracket_spots;
-        int bracket_gap;
+        node * root;            // Root of bracket tree
+        int    bracket_spots;   // How many elements in tree
 
         void copy_bracket(const bracket &);
         void copy_bracket(node *&, node *);
@@ -73,6 +47,9 @@ class bracket : public utils
         void draw_pair(const std::pair<const team*, const team*> &, int) const;
         void erase();
         void erase(node *);
+        bool search_and_decide(int);
+        bool search_and_decide(node *, node *, char, int);
+        void user_pick_winner(node *, node *, char);
 };
 
 #endif

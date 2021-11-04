@@ -11,6 +11,11 @@ team::team(string _school_name, int _wins, int _losses, int _ties, int _seed)
       seed(_seed)
 {}
 
+/* Ex.
+ * CENTRAL CATHOLIC:
+ * #-#-#
+ * Seed: ##
+ */
 void team::display() const
 {
     cout << school_name << ": " << endl
@@ -21,6 +26,7 @@ void team::display() const
          << "Seed: " << seed << endl;
 }
 
+// Ex. " ## CENTRAL CA "
 void team::display_in_bracket() const
 {
     cout << " " << setw(2) << setfill(' ') << left << seed << " ";
@@ -33,10 +39,16 @@ void team::display_in_bracket() const
 
 bool team::invalid_rank(int _max_seed) const
 {
+    // Checks if negative or over some max seed
     return seed > _max_seed || seed < 1;
 }
 
 int team::get_seed() const
 {
     return seed;
+}
+
+bool team::same_seed(int rank) const
+{
+    return seed == rank;
 }
