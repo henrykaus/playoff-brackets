@@ -106,7 +106,6 @@ void bracket::fill_bracket(const string & _file_name)
     if (!inFile.is_open())
         throw invalid_argument("File name doesn't exist");
 
-    inFile.clear();
     erase();
     fill_bracket(inFile, root);
 
@@ -122,9 +121,11 @@ void bracket::fill_bracket(ifstream & inFile, node *& _root)
         bool             has_children;
 
         spot.first.read_team(inFile);
+        inFile.ignore();
         spot.second.read_team(inFile);
+        inFile.ignore();
         inFile >> has_children;
-        inFile.ignore(2);
+        inFile.ignore();
 
         _root = new node(spot);
 
@@ -144,43 +145,30 @@ void bracket::init_bracket(const string & _file_name)
     ifstream      inFile;             // Input stream
     stack<team>   unordered_teams;    // Teams from file
     team**        ordered_teams;      // Teams from file in seed order
-    int num_teams = 0;                // Number of teams from file
-
-    // Temp variables to store team attributes
-    string school_name;    
-    int    wins, losses, ties, seed;
+    int           num_teams = 0;      // Number of teams from file
+    team          temp_team;
 
     // Open file
     inFile.open(_file_name);
     if (!inFile.is_open())
         throw invalid_argument("File name doesn't exist");
 
-    inFile.clear();
     // Read data into a stack
-    while (!inFile.eof() && inFile.good())
+    inFile.peek();
+    while (!inFile.eof() && !inFile.fail())
     {
-        getline(inFile, school_name, ';');
-        inFile >> wins;
-        inFile.get();
-        inFile >> losses;
-        inFile.get();
-        inFile >> ties;
-        inFile.get();
-        inFile >> seed;
-        inFile.get();
-        team temp_team(school_name, wins, losses, ties, seed);
+        temp_team.read_team(inFile);
         unordered_teams.push(temp_team);
+        inFile.ignore();
         ++num_teams;
-        inFile.peek();
     }
 
     // Error check bad input
-    if (inFile.fail() && !inFile.eof())
+    if (!inFile.eof())
     {
         inFile.close();
         throw invalid_argument("File formatted incorrectly (ensure no empty lines)");
     }
-
     inFile.close();
 
     // Check if valid number of teams (2^x)
@@ -188,7 +176,7 @@ void bracket::init_bracket(const string & _file_name)
         throw invalid_argument("Number of teams isn't power of two.");
 
     // Initialize array of ordered teams
-    int array_size = num_teams * 2; // order_comp_teams() requires doubled array
+    int array_size = num_teams * 2; // order_comp_teams() requires double size array
     ordered_teams  = new team*[array_size];
     for (int i = 0; i < array_size; ++i)
         ordered_teams[i] = nullptr;
@@ -213,10 +201,10 @@ void bracket::init_bracket(const string & _file_name)
         unordered_teams.pop();
     }
 
-    // Order teams based on seeded matchups (1v32, 2v31, ...)
+    // Order teams based on seeded matchups (1v32, 2v31, ...) and place into tree
     ordered_teams = order_comp_bracket(ordered_teams, num_teams);
-    // Place teams in tree
     fill_bracket(ordered_teams, num_teams);
+
     // Delete all elements from array
     for (int i = 0; i < num_teams; ++i)
         if (ordered_teams[i])
@@ -272,6 +260,7 @@ void bracket::fill_bracket(team ** _comp_ordered_teams, int num_teams)
     // Reset bracket
     erase();
     init(num_teams);
+
     // Fill bracket from array
     fill_bracket(root, _comp_ordered_teams, curr_index);
 }
@@ -282,8 +271,7 @@ void bracket::fill_bracket(node * _root, team ** _comp_ordered_teams,
     // Adds teams from array if at child
     if (!_root->get_left() && !_root->get_right())
     {
-        _root->set_pair(*_comp_ordered_teams[_curr_index],
-            *_comp_ordered_teams[_curr_index + 1]);
+        _root->set_pair(*_comp_ordered_teams[_curr_index], *_comp_ordered_teams[_curr_index + 1]);
         _curr_index += 2;
     }
     else
@@ -295,7 +283,7 @@ void bracket::fill_bracket(node * _root, team ** _comp_ordered_teams,
 
 void bracket::save_bracket(const string & _file_name)
 {
-    ofstream outFile;
+    ofstream outFile;   // File ostream
 
     outFile.open(_file_name, std::ofstream::out | std::ofstream::trunc);
     save_bracket(outFile, root);
@@ -309,16 +297,18 @@ void bracket::save_bracket(ofstream & outFile, node * _root)
         if (_root != this->root)
             outFile << '\n';
         _root->get_pair().first.print_for_file(outFile);
+        outFile << ';';
         _root->get_pair().second.print_for_file(outFile);
+        outFile << ';';
 
         if (_root->get_left())
         {
-            outFile << "1;";
+            outFile << "1";
             save_bracket(outFile, _root->get_left());
             save_bracket(outFile, _root->get_right());
         }
         else
-            outFile << "0;";
+            outFile << "0";
     }
 }
 

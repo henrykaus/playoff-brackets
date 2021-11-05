@@ -69,18 +69,17 @@ bool team::same_name(const string & _school_name) const
 
 void team::print_for_file(std::ostream & outFile) const
 {
-    outFile << school_name << ';' << wins << ';' << losses << ';' << ties << ';' << seed << ';';
+    outFile << school_name << ';' << wins << ';' << losses << ';' << ties << ';' << seed;
 }
 
 void team::read_team(std::istream & inFile)
 {
     getline(inFile, school_name, ';');
     inFile >> wins;
-    inFile.get();
+    inFile.ignore();
     inFile >> losses;
-    inFile.get();
+    inFile.ignore();
     inFile >> ties;
-    inFile.get();
+    inFile.ignore();
     inFile >> seed;
-    inFile.get();
 }

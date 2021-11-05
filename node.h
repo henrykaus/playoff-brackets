@@ -24,8 +24,8 @@ class node
 
     private:
         std::pair<team, team> spot;     // Playoff round contenders
-        node *                    left;     // Left child
-        node *                    right;    // Right child
+        node *                left;     // Left child
+        node *                right;    // Right child
 
         void copy_node(const node &);
 };

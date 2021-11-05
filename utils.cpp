@@ -10,6 +10,7 @@ bool utils::is_pow_two(int _num) const
 int utils::integer_input(std::istream & in, const char * err_msg) const
 {
     int number;
+
     in >> number;
     while (in.fail())
     {
@@ -19,5 +20,6 @@ int utils::integer_input(std::istream & in, const char * err_msg) const
             cout << err_msg;
         in >> number;
     }
+
     return number;
 }
