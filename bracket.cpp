@@ -55,7 +55,6 @@ void bracket::init(int _bracket_teams)
         bracket_spots += temp_bracket_size;
     ++bracket_spots;
 
-
     create_tree();
 }
 
@@ -119,30 +118,14 @@ void bracket::fill_bracket(ifstream & inFile, node *& _root)
     inFile.peek();
     if (!inFile.eof())
     {
-        pair<team *, team *> spot;
-        team * school_1, * school_2;
-        bool   has_children;
+        pair<team, team> spot;
+        bool             has_children;
 
-        school_1 = new team;
-        school_1->read_team(inFile);
-        school_2 = new team;
-        school_2->read_team(inFile);
+        spot.first.read_team(inFile);
+        spot.second.read_team(inFile);
         inFile >> has_children;
         inFile.ignore(2);
-        if (!school_1->same_name("NONE"))
-            spot.first  = school_1;
-        else
-        {
-            spot.first = nullptr;
-            delete school_1;
-        }
-        if (!school_2->same_name("NONE"))
-            spot.second = school_2;
-        else
-        {
-            spot.second = nullptr;
-            delete school_2;
-        }
+
         _root = new node(spot);
 
         ++bracket_spots;
@@ -158,14 +141,14 @@ void bracket::fill_bracket(ifstream & inFile, node *& _root)
 // Initializes bracket from data file using fstream
 void bracket::init_bracket(const string & _file_name)
 {
-    ifstream        inFile;             // Input stream
-    stack<team *>   unordered_teams;    // Teams from file
-    team**          ordered_teams;      // Teams from file in seed order
-    int num_teams = 0;                  // Number of teams from file
+    ifstream      inFile;             // Input stream
+    stack<team>   unordered_teams;    // Teams from file
+    team**        ordered_teams;      // Teams from file in seed order
+    int num_teams = 0;                // Number of teams from file
 
     // Temp variables to store team attributes
-    string          school_name;    
-    int wins, losses, ties, seed;
+    string school_name;    
+    int    wins, losses, ties, seed;
 
     // Open file
     inFile.open(_file_name);
@@ -185,21 +168,16 @@ void bracket::init_bracket(const string & _file_name)
         inFile.get();
         inFile >> seed;
         inFile.get();
-
-        unordered_teams.push(new team(school_name, wins, losses, ties, seed));
+        team temp_team(school_name, wins, losses, ties, seed);
+        unordered_teams.push(temp_team);
         ++num_teams;
+        inFile.peek();
     }
 
     // Error check bad input
     if (inFile.fail() && !inFile.eof())
     {
         inFile.close();
-        // Delete each team from stack
-        for (int i = 0; i < num_teams; ++i)
-        {
-            delete unordered_teams.top();
-            unordered_teams.pop();
-        }
         throw invalid_argument("File formatted incorrectly (ensure no empty lines)");
     }
 
@@ -207,26 +185,18 @@ void bracket::init_bracket(const string & _file_name)
 
     // Check if valid number of teams (2^x)
     if (!is_pow_two(num_teams))
-    {
-        // Clean up before throw (delete each team from stack)
-        for (int i = 0; i < num_teams; ++i)
-        {
-            delete unordered_teams.top();
-            unordered_teams.pop();
-        }
         throw invalid_argument("Number of teams isn't power of two.");
-    }
 
     // Initialize array of ordered teams
     int array_size = num_teams * 2; // order_comp_teams() requires doubled array
-    ordered_teams = new team*[array_size];
+    ordered_teams  = new team*[array_size];
     for (int i = 0; i < array_size; ++i)
         ordered_teams[i] = nullptr;
 
     // Pop from stack into array based on seed number
     for (int i = 0; i < num_teams; ++i)
     {
-        team * curr_team = unordered_teams.top();
+        team * curr_team = new team(unordered_teams.top());
         // Check if negative, or too large of a seed, or if a double up on a seed
         if (curr_team->invalid_rank(num_teams) ||
            (ordered_teams[curr_team->get_seed() - 1]))
@@ -247,6 +217,10 @@ void bracket::init_bracket(const string & _file_name)
     ordered_teams = order_comp_bracket(ordered_teams, num_teams);
     // Place teams in tree
     fill_bracket(ordered_teams, num_teams);
+    // Delete all elements from array
+    for (int i = 0; i < num_teams; ++i)
+        if (ordered_teams[i])
+            delete ordered_teams[i];
     delete [] ordered_teams;
 }
 
@@ -308,8 +282,8 @@ void bracket::fill_bracket(node * _root, team ** _comp_ordered_teams,
     // Adds teams from array if at child
     if (!_root->get_left() && !_root->get_right())
     {
-        _root->set_pair(_comp_ordered_teams[_curr_index],
-            _comp_ordered_teams[_curr_index+1]);
+        _root->set_pair(*_comp_ordered_teams[_curr_index],
+            *_comp_ordered_teams[_curr_index + 1]);
         _curr_index += 2;
     }
     else
@@ -334,14 +308,8 @@ void bracket::save_bracket(ofstream & outFile, node * _root)
     {
         if (_root != this->root)
             outFile << '\n';
-        if (_root->get_pair().first)
-            _root->get_pair().first->print_for_file(outFile);
-        else
-            outFile << "NONE;0;0;0;0;";
-        if (_root->get_pair().second)
-            _root->get_pair().second->print_for_file(outFile);
-        else
-            outFile << "NONE;0;0;0;0;";
+        _root->get_pair().first.print_for_file(outFile);
+        _root->get_pair().second.print_for_file(outFile);
 
         if (_root->get_left())
         {
@@ -402,8 +370,8 @@ void bracket::draw(node * _left_root, node * _right_root, int _curr_depth,
 }
 
 // Draws two mirrored playoff spots
-void bracket::draw_pairs(const pair<const team*, const team*> & _left_spot, 
-                         const pair<const team*, const team*> & _right_spot, 
+void bracket::draw_pairs(const pair<team, team> & _left_spot, 
+                         const pair<team, team> & _right_spot, 
                          int _left_padding) const
 {
     int bracket_gap = (2*(int)log2((bracket_spots+1)/2-1)+1) * SIZE_PAIR_PADDING; // Padding between outermost spots
@@ -413,8 +381,8 @@ void bracket::draw_pairs(const pair<const team*, const team*> & _left_spot,
     for (int i = 0; i < _left_padding; ++i)
         cout << ' ';
     cout << "|";
-    if (_left_spot.first)
-        _left_spot.first->display_in_bracket();
+    if (!_left_spot.first.same_name("NONE"))
+        _left_spot.first.display_in_bracket();
     else
         cout << "---------------";
     cout << "|";
@@ -422,8 +390,8 @@ void bracket::draw_pairs(const pair<const team*, const team*> & _left_spot,
         cout << ' ';
     // First team in matchup on right
     cout << "|";
-    if (_right_spot.first)
-        _right_spot.first->display_in_bracket();
+    if (!_right_spot.first.same_name("NONE"))
+        _right_spot.first.display_in_bracket();
     else
         cout << "---------------";
     cout << "|\n";
@@ -432,8 +400,8 @@ void bracket::draw_pairs(const pair<const team*, const team*> & _left_spot,
     for (int i = 0; i < _left_padding; ++i)
         cout << ' ';
     cout << "|";
-    if (_left_spot.second)
-        _left_spot.second->display_in_bracket();
+    if (!_left_spot.second.same_name("NONE"))
+        _left_spot.second.display_in_bracket();
     else
         cout << "---------------";
     cout << "|";
@@ -441,23 +409,23 @@ void bracket::draw_pairs(const pair<const team*, const team*> & _left_spot,
         cout << ' ';
     // Second team in matchup on right
     cout << "|";
-    if (_right_spot.second)
-        _right_spot.second->display_in_bracket();
+    if (!_right_spot.second.same_name("NONE"))
+        _right_spot.second.display_in_bracket();
     else
         cout << "---------------";
     cout << "|\n";
 }
 
 // Draws one bracket spot
-void bracket::draw_pair(const pair<const team*, const team*> & _spot, 
+void bracket::draw_pair(const pair<team, team> & _spot, 
                         int _left_padding) const
 {
     // First team in matchup
     for (int i = 0; i < _left_padding; ++i)
         cout << ' ';
     cout << "|";
-    if (_spot.first)
-        _spot.first->display_in_bracket();
+    if (!_spot.first.same_name("NONE"))
+        _spot.first.display_in_bracket();
     else
         cout << "---------------";
     cout << "|\n";
@@ -466,8 +434,8 @@ void bracket::draw_pair(const pair<const team*, const team*> & _spot,
     for (int i = 0; i < _left_padding; ++i)
         cout << ' ';
     cout << "|";
-    if (_spot.second)
-        _spot.second->display_in_bracket();
+    if (!_spot.second.same_name("NONE"))
+        _spot.second.display_in_bracket();
     else
         cout << "---------------";
     cout << "|" << endl;
@@ -497,28 +465,30 @@ bool bracket::search_and_decide(node * root, node * parent, char dir, int rank)
 {
     if (root)
     {
-        bool   found_left  = false;
-        bool   found_right = false;
-        team * first  = root->get_pair().first;
-        team * second = root->get_pair().second;
+        bool found_left    = false;
+        bool found_right   = false;
+        team first         = root->get_pair().first;
+        team second        = root->get_pair().second;
+        bool first_exists  = !first.same_name("NONE");
+        bool second_exists = !second.same_name("NONE");
 
-        if (first || second)
+        if (first_exists || second_exists)
         {
             // Determine if/where the found team is
-            if (first && first->same_seed(rank))
+            if (first_exists && first.same_seed(rank))
                 found_left = true;
-            else if (second && second->same_seed(rank))
+            else if (second_exists && second.same_seed(rank))
                 found_right = true;
 
             // Determine where to continue search/decide winner
-            if (first && second)
+            if (first_exists && second_exists)
             {
                 if (found_left || found_right)
                    user_pick_winner(root, parent, dir);
             }
-            else if (first && !found_left)
+            else if (first_exists && !found_left)
                 found_right = search_and_decide(root->get_right(), root, 'R', rank);
-            else if (second && !found_right)
+            else if (second_exists && !found_right)
                 found_left  = search_and_decide(root->get_left(), root, 'L', rank);
         }
         // Empty spot, continue left and right
@@ -536,9 +506,9 @@ bool bracket::search_and_decide(node * root, node * parent, char dir, int rank)
 
 void bracket::user_pick_winner(node * root, node * parent, char dir)
 {
-    int winner = -1;
-    pair<team *, team *> curr_spot  = root->get_pair();
-    bool first = false;
+    int  winner = -1;
+    pair<team , team> curr_spot  = root->get_pair();
+    bool first  = false;
     bool second = false;
 
     // Case for if the final game
@@ -547,22 +517,22 @@ void bracket::user_pick_winner(node * root, node * parent, char dir)
 
     cout << "Who won (team seed)?" << endl
          << "===============" << endl;
-    curr_spot.first->display_in_bracket();
+    curr_spot.first.display_in_bracket();
     cout << endl;
-    curr_spot.second->display_in_bracket();
+    curr_spot.second.display_in_bracket();
     cout << endl
          << "===============" << endl << endl
          << "-> ";
 
     winner = integer_input(std::cin, "-> ");
-    first  = curr_spot.first->same_seed(winner);
-    second = curr_spot.second->same_seed(winner);
+    first  = curr_spot.first.same_seed(winner);
+    second = curr_spot.second.same_seed(winner);
     while (!first && !second)
     {
         cout << "-> ";
         winner = integer_input(std::cin, "-> ");
-        first  = curr_spot.first->same_seed(winner);
-        second = curr_spot.second->same_seed(winner);
+        first  = curr_spot.first.same_seed(winner);
+        second = curr_spot.second.same_seed(winner);
     }
 
     if (first && dir == 'L')

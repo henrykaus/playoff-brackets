@@ -11,6 +11,15 @@ team::team(string _school_name, int _wins, int _losses, int _ties, int _seed)
       seed(_seed)
 {}
 
+void team::set_team(string _school_name, int _wins, int _losses, int _ties, int _seed)
+{
+    school_name = _school_name;
+    wins        = _wins;
+    losses      = _losses;
+    ties        = _ties;
+    seed        = _seed;
+}
+
 /* Ex.
  * CENTRAL CATHOLIC:
  * #-#-#

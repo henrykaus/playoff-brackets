@@ -19,6 +19,7 @@ class team
         bool same_name(const std::string &) const;
         void print_for_file(std::ostream &) const;
         void read_team(std::istream &);
+        void set_team(std::string, int, int, int, int);
 
     private:
         std::string school_name;    // Name of school

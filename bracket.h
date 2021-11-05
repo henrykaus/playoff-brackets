@@ -43,10 +43,9 @@ class bracket : public utils
         void fill_bracket(node *, team **, int &);
         void draw(node * _left_root, node * _right_root, int _curr_depth,
             int & _max_depth) const;
-        void draw_pairs(const std::pair<const team*, const team*> &,
-            const std::pair<const team*, const team*> &, int _left_padding = 0)
-            const;
-        void draw_pair(const std::pair<const team*, const team*> &, int) const;
+        void draw_pairs(const std::pair<team, team> &,
+            const std::pair<team, team> &, int _left_padding = 0) const;
+        void draw_pair(const std::pair<team, team> &, int) const;
         void erase();
         void erase(node *);
         bool search_and_decide(int);
