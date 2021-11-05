@@ -16,6 +16,9 @@ class team
         bool invalid_rank(int)      const;
         int  get_seed()             const;
         bool same_seed(int)         const;
+        bool same_name(const std::string &) const;
+        void print_for_file(std::ostream &) const;
+        void read_team(std::istream &);
 
     private:
         std::string school_name;    // Name of school

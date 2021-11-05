@@ -85,6 +85,7 @@ void bracket::erase()
 {
     erase(root);
     root = nullptr;
+    bracket_spots = 0;
 }
 
 void bracket::erase(node * _curr_root)
@@ -97,8 +98,65 @@ void bracket::erase(node * _curr_root)
     }
 }
 
+void bracket::fill_bracket(const string & _file_name)
+{
+    ifstream        inFile;             // Input stream
+
+    // Open file
+    inFile.open(_file_name);
+    if (!inFile.is_open())
+        throw invalid_argument("File name doesn't exist");
+
+    inFile.clear();
+    erase();
+    fill_bracket(inFile, root);
+
+    inFile.close();
+}
+
+void bracket::fill_bracket(ifstream & inFile, node *& _root)
+{
+    inFile.peek();
+    if (!inFile.eof())
+    {
+        pair<team *, team *> spot;
+        team * school_1, * school_2;
+        bool   has_children;
+
+        school_1 = new team;
+        school_1->read_team(inFile);
+        school_2 = new team;
+        school_2->read_team(inFile);
+        inFile >> has_children;
+        inFile.ignore(2);
+        if (!school_1->same_name("NONE"))
+            spot.first  = school_1;
+        else
+        {
+            spot.first = nullptr;
+            delete school_1;
+        }
+        if (!school_2->same_name("NONE"))
+            spot.second = school_2;
+        else
+        {
+            spot.second = nullptr;
+            delete school_2;
+        }
+        _root = new node(spot);
+
+        ++bracket_spots;
+
+        if (has_children)
+        {
+            fill_bracket(inFile, _root->get_left());
+            fill_bracket(inFile, _root->get_right());
+        }
+    }
+}
+
 // Initializes bracket from data file using fstream
-void bracket::init_bracket(string file_name)
+void bracket::init_bracket(const string & _file_name)
 {
     ifstream        inFile;             // Input stream
     stack<team *>   unordered_teams;    // Teams from file
@@ -110,7 +168,7 @@ void bracket::init_bracket(string file_name)
     int wins, losses, ties, seed;
 
     // Open file
-    inFile.open(file_name);
+    inFile.open(_file_name);
     if (!inFile.is_open())
         throw invalid_argument("File name doesn't exist");
 
@@ -261,6 +319,41 @@ void bracket::fill_bracket(node * _root, team ** _comp_ordered_teams,
     }
 }
 
+void bracket::save_bracket(const string & _file_name)
+{
+    ofstream outFile;
+
+    outFile.open(_file_name, std::ofstream::out | std::ofstream::trunc);
+    save_bracket(outFile, root);
+    outFile.close();
+}
+
+void bracket::save_bracket(ofstream & outFile, node * _root)
+{
+    if (_root)
+    {
+        if (_root != this->root)
+            outFile << '\n';
+        if (_root->get_pair().first)
+            _root->get_pair().first->print_for_file(outFile);
+        else
+            outFile << "NONE;0;0;0;0;";
+        if (_root->get_pair().second)
+            _root->get_pair().second->print_for_file(outFile);
+        else
+            outFile << "NONE;0;0;0;0;";
+
+        if (_root->get_left())
+        {
+            outFile << "1;";
+            save_bracket(outFile, _root->get_left());
+            save_bracket(outFile, _root->get_right());
+        }
+        else
+            outFile << "0;";
+    }
+}
+
 void bracket::draw() const
 {
     int max_depth = log2(bracket_spots + 1) - 1;    // Max depth of tree
@@ -384,8 +477,9 @@ void bracket::decide_winner()
 {
     int  team_rank;
     bool found;
-    cout << "Who's match would you like to decide (team rank)? ";
-    team_rank = integer_input(std::cin, "Please enter a valid rank: ");
+    cout << "Who's match would you like to decide (team seed)? ";
+    team_rank = integer_input(std::cin, "Please enter a valid seed: ");
+    cout << endl;
 
     found = search_and_decide(team_rank);
     if (!found)
@@ -451,7 +545,7 @@ void bracket::user_pick_winner(node * root, node * parent, char dir)
     if (!parent)
         return;
 
-    cout << "Who won?" << endl
+    cout << "Who won (team seed)?" << endl
          << "===============" << endl;
     curr_spot.first->display_in_bracket();
     cout << endl;

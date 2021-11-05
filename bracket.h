@@ -23,7 +23,9 @@ class bracket : public utils
 
         bracket & operator = (const bracket &);
 
-        void init_bracket(std::string file_name);
+        void init_bracket(const std::string & file_name);
+        void save_bracket(const std::string & file_name);
+        void fill_bracket(const std::string & _file_name);
         void draw() const;
         void decide_winner();
     
@@ -50,6 +52,8 @@ class bracket : public utils
         bool search_and_decide(int);
         bool search_and_decide(node *, node *, char, int);
         void user_pick_winner(node *, node *, char);
+        void save_bracket(std::ofstream &, node *);
+        void fill_bracket(std::ifstream & inFile, node *& _root);
 };
 
 #endif

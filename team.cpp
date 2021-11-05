@@ -52,3 +52,26 @@ bool team::same_seed(int rank) const
 {
     return seed == rank;
 }
+
+bool team::same_name(const string & _school_name) const
+{
+    return school_name == _school_name;
+}
+
+void team::print_for_file(std::ostream & outFile) const
+{
+    outFile << school_name << ';' << wins << ';' << losses << ';' << ties << ';' << seed << ';';
+}
+
+void team::read_team(std::istream & inFile)
+{
+    getline(inFile, school_name, ';');
+    inFile >> wins;
+    inFile.get();
+    inFile >> losses;
+    inFile.get();
+    inFile >> ties;
+    inFile.get();
+    inFile >> seed;
+    inFile.get();
+}
