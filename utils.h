@@ -7,7 +7,8 @@ class utils
 {
     public:
         bool is_pow_two(int) const;
-        int  integer_input(std::istream & in = std::cin, const char * err_msg = nullptr) const;
+        int  integer_input(std::istream & in, const char * err_msg = nullptr) const;
+        char capital_char_input(std::istream & in) const;
 };
 
 #endif

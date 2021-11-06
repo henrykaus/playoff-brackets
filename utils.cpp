@@ -23,3 +23,10 @@ int utils::integer_input(std::istream & in, const char * err_msg) const
 
     return number;
 }
+
+char utils::capital_char_input(std::istream & in) const
+{
+    char option;
+    in >> option;
+    return toupper(option);
+}

@@ -29,10 +29,11 @@ class bracket : public utils
         void draw() const;
         void decide_winner();
     
-    private:
+    protected:
         node * root;            // Root of bracket tree
         int    bracket_spots;   // How many elements in tree
 
+    private:
         void copy_bracket(const bracket &);
         void copy_bracket(node *&, node *);
         void init(int);
@@ -50,7 +51,7 @@ class bracket : public utils
         void erase(node *);
         bool search_and_decide(int);
         bool search_and_decide(node *, node *, char, int);
-        void user_pick_winner(node *, node *, char);
+        void advance_winner(const team &, node *, char);
         void save_bracket(std::ofstream &, node *);
         void fill_bracket(std::ifstream & inFile, node *& _root);
 };

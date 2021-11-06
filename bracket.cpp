@@ -33,6 +33,7 @@ void bracket::copy_bracket(node *& _dest_root, node * _source_root)
         _dest_root = nullptr;
 }
 
+// Parameterized Constructor
 bracket::bracket(int _bracket_teams) : root(nullptr)
 {
     init(_bracket_teams);
@@ -75,6 +76,7 @@ void bracket::create_tree(node * _curr_root, int _curr_depth, int _max_depth)
     }
 }
 
+// Destructor
 bracket::~bracket()
 {
     erase();
@@ -253,13 +255,13 @@ team ** bracket::order_comp_bracket(team ** _ordered_teams, int _size)
     return _ordered_teams;
 }
 
-void bracket::fill_bracket(team ** _comp_ordered_teams, int num_teams)
+void bracket::fill_bracket(team ** _comp_ordered_teams, int _num_teams)
 {
     int curr_index = 0;     // Requires referenced int
 
     // Reset bracket
     erase();
-    init(num_teams);
+    init(_num_teams);
 
     // Fill bracket from array
     fill_bracket(root, _comp_ordered_teams, curr_index);
@@ -435,7 +437,8 @@ void bracket::decide_winner()
 {
     int  team_rank;
     bool found;
-    cout << "Who's match would you like to decide (team seed)? ";
+
+    cout << "Which team would you like to advance (team seed)? ";
     team_rank = integer_input(std::cin, "Please enter a valid seed: ");
     cout << endl;
 
@@ -443,50 +446,53 @@ void bracket::decide_winner()
     if (!found)
         cout << "Team is out of the playoffs or doesn't exist." << endl;
     else
-        cout << "Changes made or team has no opponent." << endl;
+        cout << "Changes made if necessary." << endl;
 }
 
-bool bracket::search_and_decide(int rank)
+bool bracket::search_and_decide(int _rank)
 {
-    return search_and_decide(root, nullptr, 'X', rank);
+    return search_and_decide(root, nullptr, 'X', _rank);
 }
 
-bool bracket::search_and_decide(node * root, node * parent, char dir, int rank)
+bool bracket::search_and_decide(node * _root, node * _parent, char _dir, int _rank)
 {
-    if (root)
+    if (_root)
     {
         bool found_left    = false;
         bool found_right   = false;
-        team first         = root->get_pair().first;
-        team second        = root->get_pair().second;
+        team first         = _root->get_pair().first;
+        team second        = _root->get_pair().second;
         bool first_exists  = !first.same_name("NONE");
         bool second_exists = !second.same_name("NONE");
 
+        // Check if playoff spot has at least 1 team in it
         if (first_exists || second_exists)
         {
             // Determine if/where the found team is
-            if (first_exists && first.same_seed(rank))
+            if (first_exists && first.same_seed(_rank))
                 found_left = true;
-            else if (second_exists && second.same_seed(rank))
+            else if (second_exists && second.same_seed(_rank))
                 found_right = true;
 
             // Determine where to continue search/decide winner
             if (first_exists && second_exists)
             {
-                if (found_left || found_right)
-                   user_pick_winner(root, parent, dir);
+                if (found_left)
+                   advance_winner(first, _parent, _dir);
+                if (found_right)
+                   advance_winner(second, _parent, _dir);
             }
             else if (first_exists && !found_left)
-                found_right = search_and_decide(root->get_right(), root, 'R', rank);
+                found_right = search_and_decide(_root->get_right(), _root, 'R', _rank);
             else if (second_exists && !found_right)
-                found_left  = search_and_decide(root->get_left(), root, 'L', rank);
+                found_left  = search_and_decide(_root->get_left(), _root, 'L', _rank);
         }
         // Empty spot, continue left and right
         else
         {
-            found_left  = search_and_decide(root->get_left(), root, 'L', rank);
+            found_left  = search_and_decide(_root->get_left(), _root, 'L', _rank);
             if (!found_left)
-                found_right = search_and_decide(root->get_right(), root, 'R', rank);
+                found_right = search_and_decide(_root->get_right(), _root, 'R', _rank);
         }
         return found_left || found_right;
     }
@@ -494,43 +500,14 @@ bool bracket::search_and_decide(node * root, node * parent, char dir, int rank)
         return false;
 }
 
-void bracket::user_pick_winner(node * root, node * parent, char dir)
+void bracket::advance_winner(const team & _winner, node * _parent, char _dir)
 {
-    int  winner = -1;
-    pair<team , team> curr_spot  = root->get_pair();
-    bool first  = false;
-    bool second = false;
-
     // Case for if the final game
-    if (!parent)
+    if (!_parent)
         return;
 
-    cout << "Who won (team seed)?" << endl
-         << "===============" << endl;
-    curr_spot.first.display_in_bracket();
-    cout << endl;
-    curr_spot.second.display_in_bracket();
-    cout << endl
-         << "===============" << endl << endl
-         << "-> ";
-
-    winner = integer_input(std::cin, "-> ");
-    first  = curr_spot.first.same_seed(winner);
-    second = curr_spot.second.same_seed(winner);
-    while (!first && !second)
-    {
-        cout << "-> ";
-        winner = integer_input(std::cin, "-> ");
-        first  = curr_spot.first.same_seed(winner);
-        second = curr_spot.second.same_seed(winner);
-    }
-
-    if (first && dir == 'L')
-        parent->set_pair_first(curr_spot.first);
-    else if (first && dir == 'R')
-        parent->set_pair_second(curr_spot.first);
-    else if (second && dir == 'L')
-        parent->set_pair_first(curr_spot.second);
-    else if (second && dir == 'R')
-        parent->set_pair_second(curr_spot.second);
+    if (_dir == 'L')
+        _parent->set_pair_first(_winner);
+    else
+        _parent->set_pair_second(_winner);
 }

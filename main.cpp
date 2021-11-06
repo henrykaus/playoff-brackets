@@ -1,14 +1,17 @@
 #include <cstring>
-#include "bracket.h"
+#include "bracket_driver.h"
 using namespace std;
 
 int main()
 {
+    bracket_driver my_bracket;
+    my_bracket.start();
+    /*
    // int size;
-    bool continue_ = true;
+    int  continue_ = 1;
     char option;
     bracket soccer_bracket;         // OSAA 6A Girls Soccer Playoff bracket
-
+    
     // Clear screen
     for (int i = 0; i < 75; ++i)
         printf("\n");
@@ -27,9 +30,9 @@ int main()
     cout << endl;
 
     if (option == 'E')
-        soccer_bracket.fill_bracket("girls_6A_soccer_saved.txt");
+        soccer_bracket.fill_bracket("resources/saved/6A_football_saved copy.txt");
     else
-        soccer_bracket.init_bracket("girls_6A_soccer.txt");
+        soccer_bracket.init_bracket("resources/new/6A_football.txt");
 
     soccer_bracket.draw();
     cout << endl;
@@ -46,7 +49,8 @@ int main()
     }
 
     cout << "Saving progress..." << endl;
-    soccer_bracket.save_bracket("girls_6A_soccer_saved.txt");
+    soccer_bracket.save_bracket("resources/saved/6A_football_saved copy.txt");
+    */
 
     return 0;
 }
