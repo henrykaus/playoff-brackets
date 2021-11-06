@@ -19,7 +19,7 @@ void bracket_driver::start()
                 get_files(file_options, "resources\\saved");
                 file_not_existing = true;
             }
-            catch(invalid_argument const&) {
+            catch (const invalid_argument & err) {
                 cout << "No existing files. Please select a new file." << endl;
                 get_files(file_options, "resources\\new");
             }
@@ -59,7 +59,7 @@ void bracket_driver::get_files(vector<string> & files, const string & path)
         files.push_back(entry.path().filename().string());
     
     if (files.size() < 1)
-        throw invalid_argument("No files in the selection, please try adding one.");
+        throw invalid_argument("No files in the selection, please try adding one to resources\\new.");
 }
 
 void bracket_driver::read_file(const vector<string> & file_options)
