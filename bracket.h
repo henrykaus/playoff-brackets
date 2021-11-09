@@ -23,8 +23,8 @@ class bracket : public utils
 
         bracket & operator = (const bracket &);
 
-        void init_bracket(const std::string & file_name);
-        void save_bracket(const std::string & file_name);
+        void init_bracket(const std::string & _file_name);
+        void save_bracket(const std::string & _file_name);
         void fill_bracket(const std::string & _file_name);
         void draw() const;
         void decide_winner();

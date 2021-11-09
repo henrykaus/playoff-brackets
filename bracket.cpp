@@ -439,7 +439,7 @@ void bracket::decide_winner()
     bool found;
 
     cout << "Which team would you like to advance (team seed)? ";
-    team_rank = integer_input(std::cin, "Please enter a valid seed: ");
+    team_rank = integer_input(std::cin, "Please enter a valid seed: ", 1);
     cout << endl;
 
     found = search_and_decide(team_rank);
