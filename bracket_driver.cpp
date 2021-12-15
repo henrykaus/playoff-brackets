@@ -133,9 +133,9 @@ bool bracket_driver::read_output_file(string & _output_file)
     cout << "What would you like to save the file as? " << endl
         << "-> ";
     getline(cin, _output_file);
-    while (_output_file.find('\\') != string::npos)
+    while (_output_file.find('\\') != string::npos || _output_file.find('/') != string::npos)
     {
-        cout << "Do not use \\ in your name" << endl
+        cout << "Do not use \\ or / in your name..." << endl
             << "-> ";
         _output_file.clear();
         getline(cin, _output_file);

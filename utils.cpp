@@ -12,7 +12,7 @@ int utils::integer_input(std::istream & in, const char * _err_msg, int _min, int
     int number;
 
     in >> number;
-    while (in.fail() && number >= _min && number <= _max)
+    while (in.fail() || number < _min || number > _max)
     {
         in.clear();
         in.ignore(10000, '\n');
