@@ -1,7 +1,7 @@
 #include "bracket_driver.h"
 using namespace std;
 
-bracket_driver::bracket_driver() : input_file("NONE"), file_not_existing(false) {}
+bracket_driver::bracket_driver() : input_file("NONE"), file_exists(false) {}
 
 void bracket_driver::start()
 {
@@ -17,7 +17,7 @@ void bracket_driver::start()
         case 'E':
             try {
                 get_files(file_options, "resources\\saved");
-                file_not_existing = true;
+                file_exists = true;
             }
             catch (const invalid_argument & err) {
                 cout << "No existing files. Please select a new file." << endl;
@@ -78,7 +78,7 @@ void bracket_driver::read_file(const vector<string> & _file_options)
 
 void bracket_driver::fill_bracket()
 {
-    if (file_not_existing)
+    if (file_exists)
         bracket::fill_bracket("resources\\saved\\" + input_file);
     else
         bracket::init_bracket("resources\\new\\" + input_file);
@@ -109,7 +109,7 @@ void bracket_driver::save()
     string output_file;
     char   option = 'N';
 
-    if (!file_not_existing)
+    if (!file_exists)
     {
         while (option != 'Y' && !read_output_file(output_file))
         {

@@ -28,7 +28,7 @@ class bracket_driver : public bracket
 
     protected:
         std::string input_file;
-        bool        file_not_existing;
+        bool        file_exists;
 };
 
 #endif
