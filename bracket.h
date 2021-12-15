@@ -24,14 +24,15 @@ class bracket : public utils
         bracket & operator = (const bracket &);
 
         void init_bracket(const std::string & _file_name);
-        void save_bracket(const std::string & _file_name);
         void fill_bracket(const std::string & _file_name);
+        void save_bracket(const std::string & _file_name) const;
         void draw() const;
         void decide_winner();
     
     protected:
         node * root;            // Root of bracket tree
         int    bracket_spots;   // How many elements in tree
+        int    bracket_gap;     // Padding between outermost bracket spots
 
     private:
         void copy_bracket(const bracket &);
@@ -52,7 +53,7 @@ class bracket : public utils
         bool search_and_decide(int);
         bool search_and_decide(node *, node *, char, int);
         void advance_winner(const team &, node *, char);
-        void save_bracket(std::ofstream &, node *);
+        void save_bracket(std::ofstream &, node *) const;
         void fill_bracket(std::ifstream & inFile, node *& _root);
 };
 

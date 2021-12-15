@@ -16,6 +16,7 @@ bracket::bracket(const bracket & _source) : root(nullptr)
 void bracket::copy_bracket(const bracket & _source)
 {
     bracket_spots = _source.bracket_spots;
+    bracket_gap   = _source.bracket_gap;
 
     if (_source.root)
         copy_bracket(root, _source.root);
@@ -56,6 +57,8 @@ void bracket::init(int _bracket_teams)
         bracket_spots += temp_bracket_size;
     ++bracket_spots;
 
+    bracket_gap = (2*(int)log2((bracket_spots+1)/2-1)+1) * SIZE_PAIR_PADDING; 
+
     create_tree();
 }
 
@@ -85,8 +88,9 @@ bracket::~bracket()
 void bracket::erase()
 {
     erase(root);
-    root = nullptr;
+    root          = nullptr;
     bracket_spots = 0;
+    bracket_gap   = 0;
 }
 
 void bracket::erase(node * _curr_root)
@@ -110,6 +114,7 @@ void bracket::fill_bracket(const string & _file_name)
 
     erase();
     fill_bracket(inFile, root);
+    bracket_gap = (2*(int)log2((bracket_spots+1)/2-1)+1) * SIZE_PAIR_PADDING; 
 
     inFile.close();
 }
@@ -160,8 +165,8 @@ void bracket::init_bracket(const string & _file_name)
     while (!inFile.eof() && !inFile.fail())
     {
         temp_team.read_team(inFile);
-        unordered_teams.push(temp_team);
         inFile.ignore();
+        unordered_teams.push(temp_team);
         ++num_teams;
     }
 
@@ -189,7 +194,7 @@ void bracket::init_bracket(const string & _file_name)
         team * curr_team = new team(unordered_teams.top());
         // Check if negative, or too large of a seed, or if a double up on a seed
         if (curr_team->invalid_rank(num_teams) ||
-           (ordered_teams[curr_team->get_seed() - 1]))
+            ordered_teams[curr_team->get_seed() - 1])
         {
             // Clean up added teams before throw
             for (int i = 0; i < num_teams; ++i)
@@ -283,7 +288,7 @@ void bracket::fill_bracket(node * _root, team ** _comp_ordered_teams,
     }
 }
 
-void bracket::save_bracket(const string & _file_name)
+void bracket::save_bracket(const string & _file_name) const
 {
     ofstream outFile;   // File ostream
 
@@ -292,7 +297,7 @@ void bracket::save_bracket(const string & _file_name)
     outFile.close();
 }
 
-void bracket::save_bracket(ofstream & outFile, node * _root)
+void bracket::save_bracket(ofstream & outFile, node * _root) const
 {
     if (_root)
     {
@@ -319,8 +324,6 @@ void bracket::draw() const
     int max_depth = log2(bracket_spots + 1) - 1;    // Max depth of tree
     int num_columns = max_depth*2 + 1;              // Number of columns for bracket
     int center_column = num_columns / 2;            // Position of center column
-    // Padding between outermost bracket spots
-    int bracket_gap = (2*(int)log2((bracket_spots+1)/2-1)+1) * SIZE_PAIR_PADDING; 
 
     // Draw header for bracket
     for (int i = 0; i < num_columns; ++i)
@@ -366,7 +369,6 @@ void bracket::draw_pairs(const pair<team, team> & _left_spot,
                          const pair<team, team> & _right_spot, 
                          int _left_padding) const
 {
-    int bracket_gap = (2*(int)log2((bracket_spots+1)/2-1)+1) * SIZE_PAIR_PADDING; // Padding between outermost spots
     int right_padding = bracket_gap - (2*_left_padding);    // Padding between current spots
     
     // First team in matchup on left
@@ -479,7 +481,7 @@ bool bracket::search_and_decide(node * _root, node * _parent, char _dir, int _ra
             {
                 if (found_left)
                    advance_winner(first, _parent, _dir);
-                if (found_right)
+                else if (found_right)
                    advance_winner(second, _parent, _dir);
             }
             else if (first_exists && !found_left)
