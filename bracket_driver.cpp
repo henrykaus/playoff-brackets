@@ -66,16 +66,18 @@ void bracket_driver::delete_file(const vector<string> & _file_options)
 
     // Print list of existing files
     cout << "Which file would you like to delete?" << endl;
-    cout << "  [0] Do Not Delete (this does not work yet)" << endl;
+    cout << "  [0] Do Not Delete" << endl;
     for (int i = 0; i < (int)_file_options.size(); ++i)
         cout << "  [" << i+1 << "] " << _file_options[i] << endl;
     
     // Get input for file
     cout << "-> ";
-    option = integer_input(cin, "-> ", 1, _file_options.size());
-    file_to_delete += _file_options[option - 1].c_str();
+    option = integer_input(cin, "-> ", 0, _file_options.size());
+    
+    if (option == 0) return;
 
     // Delete file/throw error
+    file_to_delete += _file_options[option - 1].c_str();
     if (remove(file_to_delete.c_str()) != 0)
         throw invalid_argument("Internal deletion error");
 }
