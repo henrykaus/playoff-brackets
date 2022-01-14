@@ -14,7 +14,8 @@ int main()
         cout << err.what() << endl;
     }
 
-    // remove(".\\resources\\saved\\remove_me.txt") == 0)
-    
     return 0;
 }
+
+
+// Create a file management class to delete, add and print files

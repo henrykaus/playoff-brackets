@@ -8,7 +8,6 @@ void bracket_driver::start()
     vector<string> file_options;
     char file_type = read_file_type();
 
-
     switch (file_type)
     {
         case 'N':
@@ -24,9 +23,16 @@ void bracket_driver::start()
                 get_files(file_options, "resources\\new");
             }
             break;
+        case 'D':
+            get_files(file_options, "resources\\saved");
+            delete_file(file_options);
+            break;
         default:
             break;
     }
+
+    if (file_type == 'D')
+        return;
 
     cout << endl;
     read_file(file_options);
@@ -40,9 +46,9 @@ char bracket_driver::read_file_type()
 {
     char option;
 
-    cout << "Would you like to create a \'N\'ew bracket or select an \'E\'xisting? ";
+    cout << "Would you like to create a \'N\'ew bracket, select an \'E\'xisting or \'D\'elete an existing? ";
     option = capital_char_input(cin);
-    while (option != 'N' && option != 'E')
+    while (option != 'N' && option != 'E' && option != 'D')
     {
         cin.clear();
         cin.ignore(10000, '\n');
@@ -51,6 +57,27 @@ char bracket_driver::read_file_type()
     }
 
     return option;
+}
+
+void bracket_driver::delete_file(const vector<string> & _file_options)
+{
+    int option;
+    string file_to_delete = ".\\resources\\saved\\";
+
+    // Print list of existing files
+    cout << "Which file would you like to delete?" << endl;
+    cout << "  [0] Do Not Delete (this does not work yet)" << endl;
+    for (int i = 0; i < (int)_file_options.size(); ++i)
+        cout << "  [" << i+1 << "] " << _file_options[i] << endl;
+    
+    // Get input for file
+    cout << "-> ";
+    option = integer_input(cin, "-> ", 1, _file_options.size());
+    file_to_delete += _file_options[option - 1].c_str();
+
+    // Delete file/throw error
+    if (remove(file_to_delete.c_str()) != 0)
+        throw invalid_argument("Internal deletion error");
 }
 
 void bracket_driver::get_files(vector<string> & _files, const string & _path)
