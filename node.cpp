@@ -1,3 +1,9 @@
+/**
+ * @file node.cpp
+ * @author Henry Kaus (https://github.com/henrykaus)
+ * @brief Holds method definitions for the node class as apart of a bracket 
+ *        complete, balanced BST.
+ */
 #include "node.h"
 using namespace std;
 
@@ -42,7 +48,6 @@ void node::set_pair(const team & _first, const team & _second)
     spot.first  = _first;
     spot.second = _second;
 }
-
 void node::set_pair_first(const team & _first)   { spot.first  = _first; }
 void node::set_pair_second(const team & _second) { spot.second = _second; }
 void node::set_left(node * _left)   { left  = _left; }

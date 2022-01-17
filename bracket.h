@@ -1,3 +1,8 @@
+/**
+ * @file bracket.h
+ * @author Henry Kaus (https://github.com/henrykaus)
+ * @brief Holds definiton for the bracket -- a full and complete BST.
+ */
 #ifndef BRACKET
 #define BRACKET
 
@@ -16,12 +21,12 @@ static const int SIZE_PAIR_PADDING = 18;
 class bracket : public utils
 {
     public:
-        bracket();
-        bracket(const bracket &);
-        bracket(int);
-        ~bracket();
+        bracket();                  // Default constructor
+        bracket(const bracket &);   // Copy constructor
+        bracket(int);               // Param. constructor
+        ~bracket();                 // Destructor
 
-        bracket & operator = (const bracket &);
+        bracket & operator = (const bracket &); // Copy assignment operator
 
         void init_bracket(const std::string & _file_name);
         void fill_bracket(const std::string & _file_name);
