@@ -1,7 +1,17 @@
+/**
+ * @file main.cpp
+ * @author Henry Kaus (https://github.com/henrykaus)
+ * @brief 
+ * @version 0.5
+ * @date 2022-01-16
+ * 
+ * @copyright Copyright (c) 2022
+ */
 #include <cstring>
-#include "../bracket/bracket_driver.h"
+#include "bracket_driver.h"
 using namespace std;
 
+// MAIN
 int main()
 {
     bracket_driver user_bracket;
@@ -9,13 +19,9 @@ int main()
     try {
         user_bracket.start();
     }  
-    catch (const invalid_argument & err)
-    {
+    catch (const invalid_argument & err) {
         cout << err.what() << endl;
     }
 
     return 0;
 }
-
-
-// Create a file management class to delete, add and print files
