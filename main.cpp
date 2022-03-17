@@ -3,7 +3,7 @@
  * @author Henry Kaus (https://github.com/henrykaus)
  * @brief 
  * @version 0.5
- * @date 2022-01-16
+ * @date 2022-03-17
  * 
  * @copyright Copyright (c) 2022
  */
@@ -20,7 +20,7 @@ int main()
         user_bracket.start();
     }  
     catch (const invalid_argument & err) {
-        cout << err.what() << endl;
+        cerr << err.what() << endl;
     }
 
     return 0;

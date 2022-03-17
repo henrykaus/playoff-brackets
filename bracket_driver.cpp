@@ -199,7 +199,7 @@ void bracket_driver::save(bool _file_exists)
         while (!read_output_file(output_file))
         {
             cout << endl;
-            if (are_you_sure(cin, "This file name already exists, would you still like to save to this file (Y/N)?"))
+            if (are_you_sure(cin, "This file name already exists, would you still like to save to this file"))
                 break;
             else
                 cout << endl;

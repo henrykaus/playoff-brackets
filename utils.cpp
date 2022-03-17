@@ -22,7 +22,7 @@ bool utils::is_pow_two(int _num) const
 
 
 /**
- * @brief 
+ * @brief Gets error checking input for an integer
  * 
  * @param in is the input stream
  * @param _err_msg is the error message to display (default: nullptr)
@@ -51,7 +51,7 @@ int utils::integer_input(std::istream & in, const char * _err_msg, int _min, int
 
 /**
  * @brief Gets a character from user and return the uppercase variant.
- * NOTE: Any other characters still exist in stream
+ * NOTE: Does not clear stream of excess characters
  * @param in is the input stream
  * @return char: is the uppercase character
  */
@@ -62,14 +62,22 @@ char utils::capital_char_input(std::istream & in) const
     return toupper(option);
 }
 
+
+/**
+ * @brief Asks user for confirmation and returns if they said Y or N
+ * 
+ * @param in is the input stream
+ * @param _msg is the confirmation message to display (default: Are you sure (Y/N)?)
+ * @return true: user entered y or Y
+ * @return false: user entered n or N
+ */
 bool utils::are_you_sure(std::istream & in, const char * _msg) const
 {
     char option;
 
-    if (_msg)
-        cout << _msg << endl;
-    else
-        cout << "Are you sure (Y/N)?" << endl;
+    // Print confirmation message
+    if (_msg) cout << _msg << " (Y/N)?" << endl;
+    else      cout << "Are you sure (Y/N)?" << endl;
     
     do {
         cout << "-> ";
@@ -77,8 +85,5 @@ bool utils::are_you_sure(std::istream & in, const char * _msg) const
         cin.ignore(10000, '\n');
     } while (option != 'Y' && option != 'N');
     
-    if (option == 'Y')
-        return true;
-    else   
-        return false;
+    return option == 'Y';
 }

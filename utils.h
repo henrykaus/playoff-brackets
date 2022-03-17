@@ -11,8 +11,8 @@
 
 /**
  * @brief Holds utility methods for testing if an int is a power of two, getting
- *        error-checked integer input from the user and getting capital letter
- *        input from the user.
+ *        error-checked integer input from the user, getting capital letter
+ *        input from the user, and asking for confirmation.
  */
 class utils
 {
@@ -22,6 +22,7 @@ class utils
         int  integer_input(std::istream & in, const char * _err_msg = nullptr, int _min = INT_MIN, int _max = INT_MAX) const;
         // Gets error checked input for a capital character
         char capital_char_input(std::istream & in) const;
+        // Checks if user wants to continue
         bool are_you_sure(std::istream & in, const char * _msg = nullptr) const;
 };
 
