@@ -22,6 +22,7 @@ class utils
         int  integer_input(std::istream & in, const char * _err_msg = nullptr, int _min = INT_MIN, int _max = INT_MAX) const;
         // Gets error checked input for a capital character
         char capital_char_input(std::istream & in) const;
+        bool are_you_sure(std::istream & in, const char * _msg = nullptr) const;
 };
 
 #endif

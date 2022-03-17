@@ -1,63 +1,68 @@
 #include "bracket_driver.h"
 using namespace std;
 
-bracket_driver::bracket_driver() : input_file("NONE"), file_exists(false) {}
+bracket_driver::bracket_driver() : input_file("NONE")
+{}
+
 
 void bracket_driver::start()
 {
     vector<string> file_options;
-    char file_type = read_file_type();
+    int            file_type;
+    
+    cout << endl;
+    do {
+        file_options.clear();
 
-    switch (file_type)
-    {
-        case 'N':
-            get_files(file_options, "resources\\new");
-            break;
-        case 'E':
-            try {
-                get_files(file_options, "resources\\saved");
-                file_exists = true;
-            }
-            catch (const invalid_argument & err) {
-                cout << "No existing files. Please select a new file." << endl;
+        file_type = read_file_type();
+        switch (file_type)
+        {
+            case 1:
                 get_files(file_options, "resources\\new");
-            }
-            break;
-        case 'D':
-            get_files(file_options, "resources\\saved");
-            delete_file(file_options);
-            break;
-        default:
-            break;
-    }
-
-    if (file_type == 'D')
-        return;
-
-    cout << endl;
-    read_file(file_options);
-    cout << endl;
-    fill_bracket();
-    mod_view_bracket();
-    save();
+		        if (modify_file(file_options, false))
+                    continue;
+                break;
+            case 2:
+                try {
+                    get_files(file_options, "resources\\saved");
+		            if (modify_file(file_options, true))
+                        continue;
+                }
+                catch (const invalid_argument & err) {
+                    cout << "No existing files. Please select a new file." << endl;
+                    get_files(file_options, "resources\\new");
+		            if (modify_file(file_options, false))
+                        continue;
+                }
+                break;
+            case 3:
+                get_files(file_options, "resources\\saved");
+                delete_file(file_options);
+                continue;
+            default:
+                break;
+        }
+    } while (file_type != 0);
 }
 
-char bracket_driver::read_file_type()
-{
-    char option;
 
-    cout << "Would you like to create a \'N\'ew bracket, select an \'E\'xisting or \'D\'elete an existing? ";
-    option = capital_char_input(cin);
-    while (option != 'N' && option != 'E' && option != 'D')
-    {
-        cin.clear();
-        cin.ignore(10000, '\n');
-        cout << "-> ";
-        option = capital_char_input(cin);
-    }
+int bracket_driver::read_file_type()
+{
+    int option;
+
+    cout << "What would you like to do?" << endl
+         << "  [1] Create a New Bracket" << endl
+         << "  [2] Select an Existing Bracket" << endl
+         << "  [3] Delete an Existing Bracket" << endl
+         << "  [0] Quit the Program" << endl
+         << "-> ";
+
+    option = integer_input(cin, "-> ", 0, 3);
+    cout << endl;
 
     return option;
 }
+
 
 void bracket_driver::delete_file(const vector<string> & _file_options)
 {
@@ -66,21 +71,32 @@ void bracket_driver::delete_file(const vector<string> & _file_options)
 
     // Print list of existing files
     cout << "Which file would you like to delete?" << endl;
-    cout << "  [0] Do Not Delete" << endl;
     for (int i = 0; i < (int)_file_options.size(); ++i)
         cout << "  [" << i+1 << "] " << _file_options[i] << endl;
+    cout << "  [0] Do Not Delete" << endl;
     
     // Get input for file
     cout << "-> ";
     option = integer_input(cin, "-> ", 0, _file_options.size());
+    cout << endl;
     
     if (option == 0) return;
+    if (!are_you_sure(cin))
+    {
+        cout << endl;
+        return;
+    }
+    cout << endl;
 
     // Delete file/throw error
     file_to_delete += _file_options[option - 1].c_str();
+    
     if (remove(file_to_delete.c_str()) != 0)
         throw invalid_argument("Internal deletion error");
+
+    cout << _file_options[option - 1].c_str() << " was removed." << endl << endl;
 }
+
 
 void bracket_driver::get_files(vector<string> & _files, const string & _path)
 {
@@ -91,6 +107,24 @@ void bracket_driver::get_files(vector<string> & _files, const string & _path)
         throw invalid_argument("No files in the selection, please try adding one to resources\\new.");
 }
 
+
+bool bracket_driver::modify_file(const std::vector<std::string> & _file_options, bool _file_exists)
+{
+    try {
+        read_file(_file_options);
+        cout << endl;
+        fill_bracket(_file_exists);
+        mod_view_bracket();
+        save(_file_exists);
+    }
+    // Return true if any functions desires a "Go Back" option
+	catch (const invalid_argument & err) {
+        return true;
+	}
+    return false;
+}
+
+
 void bracket_driver::read_file(const vector<string> & _file_options)
 {
     int option;
@@ -98,20 +132,26 @@ void bracket_driver::read_file(const vector<string> & _file_options)
     cout << "Which file would you like to open?" << endl;
     for (int i = 0; i < (int)_file_options.size(); ++i)
         cout << "  [" << i+1 << "] " << _file_options[i] << endl;
+    cout << "  [0] Go Back" << endl;
     
     cout << "-> ";
-    option = integer_input(cin, "-> ", 1, _file_options.size());
+    option = integer_input(cin, "-> ", 0, _file_options.size());
+    cout << endl;
+    if (option == 0)
+        throw invalid_argument("Go back.");
 
     input_file = _file_options[option - 1];
 }
 
-void bracket_driver::fill_bracket()
+
+void bracket_driver::fill_bracket(bool _file_exists)
 {
-    if (file_exists)
+    if (_file_exists)
         bracket::fill_bracket("resources\\saved\\" + input_file);
     else
         bracket::init_bracket("resources\\new\\" + input_file);
 }
+
 
 void bracket_driver::mod_view_bracket()
 {
@@ -133,27 +173,44 @@ void bracket_driver::mod_view_bracket()
     }
 }
 
-void bracket_driver::save()
+
+void bracket_driver::save(bool _file_exists)
 {
     string output_file;
     char   option = 'N';
 
-    if (!file_exists)
+    // Check if want to save
+    do {
+        cout << "Would you like to save your changes (Y/N): ";
+        option = capital_char_input(cin);
+        cin.ignore(10000, '\n');
+    } while (option != 'Y' && option != 'N');
+    if (option == 'N')
     {
-        while (option != 'Y' && !read_output_file(output_file))
+        cout << endl;
+        return;
+    }
+
+    // Get file name to save to
+    option = 'N';
+    if (!_file_exists)
+    {
+        while (!read_output_file(output_file))
         {
-            cout << "This file name already exists, would you still like to save to this file (Y/N)?" << endl
-                << "-> ";
-            option = capital_char_input(cin);
-            cin.ignore(10000, '\n');
+            cout << endl;
+            if (are_you_sure(cin, "This file name already exists, would you still like to save to this file (Y/N)?"))
+                break;
+            else
+                cout << endl;
         }
     }
     else
         output_file = input_file;
 
-    cout << "Saving progress..." << endl;
+    cout << "Saving progress..." << endl << endl;
     bracket::save_bracket("resources\\saved\\" + output_file);
 }
+
 
 bool bracket_driver::read_output_file(string & _output_file)
 {

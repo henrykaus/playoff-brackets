@@ -18,18 +18,18 @@ class bracket_driver : public bracket
                             // saves to appropriate file (" "_saved.txt in resources/saved) save()
         
     private:
-        char read_file_type();
+        int read_file_type();
         void get_files(std::vector<std::string> & files, const std::string & path);
         void delete_file(const std::vector<std::string> & _file_options);
+        bool modify_file(const std::vector<std::string> & _file_options, bool _file_exists);
         void read_file(const std::vector<std::string> & files_options);
-        void fill_bracket();
+        void fill_bracket(bool _file_exists);
         void mod_view_bracket();
-        void save();
+        void save(bool _file_exists);
         bool read_output_file(std::string & output_file);
 
     protected:
         std::string input_file;
-        bool        file_exists;
 };
 
 #endif

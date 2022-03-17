@@ -61,3 +61,24 @@ char utils::capital_char_input(std::istream & in) const
     in >> option;
     return toupper(option);
 }
+
+bool utils::are_you_sure(std::istream & in, const char * _msg) const
+{
+    char option;
+
+    if (_msg)
+        cout << _msg << endl;
+    else
+        cout << "Are you sure (Y/N)?" << endl;
+    
+    do {
+        cout << "-> ";
+        option = capital_char_input(cin);
+        cin.ignore(10000, '\n');
+    } while (option != 'Y' && option != 'N');
+    
+    if (option == 'Y')
+        return true;
+    else   
+        return false;
+}
