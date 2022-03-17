@@ -19,19 +19,19 @@ void bracket_driver::start()
         {
             case 1:
                 get_files(file_options, "resources\\new");
-		        if (modify_file(file_options, false))
+                if (modify_file(file_options, false))
                     continue;
                 break;
             case 2:
                 try {
                     get_files(file_options, "resources\\saved");
-		            if (modify_file(file_options, true))
+                    if (modify_file(file_options, true))
                         continue;
                 }
                 catch (const invalid_argument & err) {
                     cout << "No existing files. Please select a new file." << endl;
                     get_files(file_options, "resources\\new");
-		            if (modify_file(file_options, false))
+                    if (modify_file(file_options, false))
                         continue;
                 }
                 break;
@@ -118,9 +118,9 @@ bool bracket_driver::modify_file(const std::vector<std::string> & _file_options,
         save(_file_exists);
     }
     // Return true if any functions desires a "Go Back" option
-	catch (const invalid_argument & err) {
+    catch (const invalid_argument & err) {
         return true;
-	}
+    }
     return false;
 }
 
