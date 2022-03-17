@@ -32,7 +32,7 @@ class bracket : public utils
         void fill_bracket(const std::string & _file_name);
         void save_bracket(const std::string & _file_name) const;
         void draw() const;
-        void decide_winner();
+        void user_decide_winner();
     
     protected:
         node * root;            // Root of bracket tree

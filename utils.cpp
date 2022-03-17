@@ -71,7 +71,7 @@ char utils::capital_char_input(std::istream & in) const
  * @return true: user entered y or Y
  * @return false: user entered n or N
  */
-bool utils::are_you_sure(std::istream & in, const char * _msg) const
+bool utils::are_you_sure(std::istream & in, const char * _msg, bool print_newline) const
 {
     char option;
 
@@ -84,6 +84,23 @@ bool utils::are_you_sure(std::istream & in, const char * _msg) const
         option = capital_char_input(cin);
         cin.ignore(10000, '\n');
     } while (option != 'Y' && option != 'N');
+    if (print_newline) cout << endl;
     
     return option == 'Y';
+}
+
+char utils::y_n_input(std::istream & in, const char * _msg) const
+{
+    char option;
+
+    // Print confirmation message
+    if (_msg) cout << _msg << " (Y/N): ";
+    else      cout << "Yes or no (Y/N): ";
+    
+    do {
+        option = capital_char_input(cin);
+        cin.ignore(10000, '\n');
+    } while (option != 'Y' && option != 'N');
+    
+    return option;
 }

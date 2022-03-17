@@ -23,7 +23,9 @@ class utils
         // Gets error checked input for a capital character
         char capital_char_input(std::istream & in) const;
         // Checks if user wants to continue
-        bool are_you_sure(std::istream & in, const char * _msg = nullptr) const;
+        bool are_you_sure(std::istream & in, const char * _msg = nullptr, bool print_newline = false) const;
+        // Gets Y or N input
+        char y_n_input(std::istream & in, const char * _msg = nullptr) const;
 };
 
 #endif
