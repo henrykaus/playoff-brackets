@@ -13,32 +13,30 @@ void bracket_driver::start()
     cout << endl;
     do {
         file_options.clear();
-
         file_type = read_file_type();
         switch (file_type)
         {
             case 1:
                 get_files(file_options, "resources\\new");
-                if (modify_file(file_options, false))
-                    continue;
+                modify_file(file_options, false);
                 break;
             case 2:
+                bool file_exists;
                 try {
                     get_files(file_options, "resources\\saved");
-                    if (modify_file(file_options, true))
-                        continue;
+                    file_exists = true;
                 }
                 catch (const invalid_argument & err) {
                     cout << "No existing files. Please select a new file." << endl;
                     get_files(file_options, "resources\\new");
-                    if (modify_file(file_options, false))
-                        continue;
+                    file_exists = false;
                 }
+                modify_file(file_options, file_exists);
                 break;
             case 3:
                 get_files(file_options, "resources\\saved");
                 delete_file(file_options);
-                continue;
+                break;
             default:
                 break;
         }
@@ -92,7 +90,10 @@ void bracket_driver::delete_file(const vector<string> & _file_options)
     file_to_delete += _file_options[option - 1].c_str();
     
     if (remove(file_to_delete.c_str()) != 0)
-        throw invalid_argument("Internal deletion error");
+    {
+        cerr << "ERROR: file does not exist." << endl << endl;
+        return;
+    }
 
     cout << _file_options[option - 1].c_str() << " was removed." << endl << endl;
 }
@@ -108,24 +109,23 @@ void bracket_driver::get_files(vector<string> & _files, const string & _path)
 }
 
 
-bool bracket_driver::modify_file(const std::vector<std::string> & _file_options, bool _file_exists)
+void bracket_driver::modify_file(const std::vector<std::string> & _file_options, bool _file_exists)
 {
-    try {
-        read_file(_file_options);
-        cout << endl;
-        fill_bracket(_file_exists);
-        mod_view_bracket();
-        save(_file_exists);
+    if (read_file(_file_options))
+    {
+        try {
+            fill_bracket(_file_exists);
+            mod_view_bracket();
+            save(_file_exists);
+        }
+        catch (const invalid_argument & err) {
+            cerr << err.what() << endl << endl;
+        }
     }
-    // Return true if any functions desires a "Go Back" option
-    catch (const invalid_argument & err) {
-        return true;
-    }
-    return false;
 }
 
 
-void bracket_driver::read_file(const vector<string> & _file_options)
+bool bracket_driver::read_file(const vector<string> & _file_options)
 {
     int option;
 
@@ -138,9 +138,10 @@ void bracket_driver::read_file(const vector<string> & _file_options)
     option = integer_input(cin, "-> ", 0, _file_options.size());
     cout << endl;
     if (option == 0)
-        throw invalid_argument("Go back.");
+        return false;
 
     input_file = _file_options[option - 1];
+    return true;
 }
 
 

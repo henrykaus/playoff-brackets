@@ -110,7 +110,7 @@ void bracket::fill_bracket(const string & _file_name)
     // Open file
     inFile.open(_file_name);
     if (!inFile.is_open())
-        throw invalid_argument("File name doesn't exist");
+        throw invalid_argument("ERROR: file does not exist");
 
     erase();
     fill_bracket(inFile, root);

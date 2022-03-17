@@ -21,8 +21,8 @@ class bracket_driver : public bracket
         int read_file_type();
         void get_files(std::vector<std::string> & files, const std::string & path);
         void delete_file(const std::vector<std::string> & _file_options);
-        bool modify_file(const std::vector<std::string> & _file_options, bool _file_exists);
-        void read_file(const std::vector<std::string> & files_options);
+        void modify_file(const std::vector<std::string> & _file_options, bool _file_exists);
+        bool read_file(const std::vector<std::string> & files_options);
         void fill_bracket(bool _file_exists);
         void mod_view_bracket();
         void save(bool _file_exists);
