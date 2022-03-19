@@ -3,6 +3,8 @@
  * @author Henry Kaus (https://github.com/henrykaus)
  * @brief Holds method definitions for the utils class. Should be used as a base
  *        class for any and all derived classes.
+ * 
+ * @copyright Copyright (c) 2022
  */
 #include "utils.h"
 using namespace std;
@@ -67,7 +69,8 @@ char utils::capital_char_input(std::istream & in) const
  * @brief Asks user for confirmation and returns if they said Y or N
  * 
  * @param in is the input stream
- * @param _msg is the confirmation message to display (default: Are you sure (Y/N)?)
+ * @param _msg is the confirmation message to display (default: Are you sure 
+ *             (Y/N)?)
  * @return true: user entered y or Y
  * @return false: user entered n or N
  */
@@ -89,6 +92,16 @@ bool utils::are_you_sure(std::istream & in, const char * _msg, bool print_newlin
     return option == 'Y';
 }
 
+
+/**
+ * @brief Asks user for 'Y' or 'N' input, takes in the input with input checking
+ *        and returns the character given as a capital. Allows the following
+ *        input: 'y', 'Y', 'n', 'N'
+ * 
+ * @param in is the input stream
+ * @param _msg is the message to be displayed before " (Y/N): "
+ * @return char of either 'Y' or 'N'
+ */
 char utils::y_n_input(std::istream & in, const char * _msg) const
 {
     char option;

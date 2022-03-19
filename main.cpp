@@ -1,13 +1,16 @@
 /**
  * @file main.cpp
  * @author Henry Kaus (https://github.com/henrykaus)
- * @brief FIXME
+ * @brief A bracket generator program. This program allows the user to select
+ *        from a batch of seeded brackets and fill in their own predictions. The
+ *        user to modify their bracket to any extent, save their progress and
+ *        return even after the program's close. The user can also delete old
+ *        saved brackets.
  * @version 0.5
- * @date 2022-03-17
+ * @date 2022-03-19
  * 
  * @copyright Copyright (c) 2022
  */
-#include <cstring>
 #include "bracket_driver.h"
 using namespace std;
 

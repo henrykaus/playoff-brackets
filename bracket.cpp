@@ -435,7 +435,7 @@ void bracket::draw_pair(const pair<team, team> & _spot,
     cout << "|" << endl;
 }
 
-void bracket::user_decide_winner()
+void bracket::user_advance_winner()
 {
     int  team_rank;
     bool found;

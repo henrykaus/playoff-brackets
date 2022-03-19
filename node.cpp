@@ -3,6 +3,8 @@
  * @author Henry Kaus (https://github.com/henrykaus)
  * @brief Holds method definitions for the node class as apart of a bracket 
  *        complete, balanced BST.
+ * 
+ * @copyright Copyright (c) 2022
  */
 #include "node.h"
 using namespace std;

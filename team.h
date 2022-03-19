@@ -2,6 +2,8 @@
  * @file team.h
  * @author Henry Kaus (https://github.com/henrykaus)
  * @brief Holds the definition for the team class.
+ * 
+ * @copyright Copyright (c) 2022
  */
 #ifndef TEAM
 #define TEAM

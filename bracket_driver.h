@@ -34,8 +34,10 @@ class bracket_driver : public bracket
         
     private:
         int  read_menu_option();
-        void get_files(std::vector<std::string> & files, const std::string & path);
-        void modify_bracket(const std::vector<std::string> & _file_options, bool _editing_existing);
+        void get_files(std::vector<std::string> & files, 
+            const std::string & path);
+        void modify_bracket(const std::vector<std::string> & _file_options, 
+            bool _editing_existing);
         bool read_bracket_choice(const std::vector<std::string> & files_options);
         void fill_bracket(bool _editing_existing);
         void view_edit_bracket();

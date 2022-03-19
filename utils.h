@@ -3,6 +3,8 @@
  * @author Henry Kaus (https://github.com/henrykaus)
  * @brief Holds the definition of the utils class that holds miscellaneous
  *        methods that other classes can be derived from.
+ * 
+ * @copyright Copyright (c) 2022
  */
 #ifndef UTILS
 #define UTILS
@@ -12,7 +14,7 @@
 /**
  * @brief Holds utility methods for testing if an int is a power of two, getting
  *        error-checked integer input from the user, getting capital letter
- *        input from the user, and asking for confirmation.
+ *        input from the user, asking for confirmation, and getting Y/N input.
  */
 class utils
 {

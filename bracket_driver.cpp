@@ -193,7 +193,7 @@ void bracket_driver::view_edit_bracket()
     // Draw/edit bracket
     while (option == 'Y')
     {
-        bracket::user_decide_winner();
+        bracket::user_advance_winner();
         cout << endl;
         bracket::draw();
         cout << endl;

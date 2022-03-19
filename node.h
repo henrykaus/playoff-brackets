@@ -3,6 +3,8 @@
  * @author Henry Kaus (https://github.com/henrykaus)
  * @brief Holds definition for a node class that holds two competing teams in a
  *        playoff bracket tree.
+ * 
+ * @copyright Copyright (c) 2022
  */
 #ifndef BRACKET_NODE
 #define BRACKET_NODE

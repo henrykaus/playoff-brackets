@@ -1,7 +1,10 @@
 /**
  * @file bracket.h
  * @author Henry Kaus (https://github.com/henrykaus)
- * @brief Holds definiton for the bracket -- a full and complete BST.
+ * @brief Holds definition for the bracket -- a full and complete binary search
+ *        tree.
+ * 
+ * @copyright Copyright (c) 2022
  */
 #ifndef BRACKET
 #define BRACKET
@@ -16,8 +19,17 @@
 #include "team.h"
 #include "utils.h"
 
-static const int SIZE_PAIR_PADDING = 18;
+static const int SIZE_PAIR_PADDING = 18;    // Size of matchup pair in print
 
+/**
+ * @brief A binary search tree for a 2^n number of seeded teams. Has methods to
+ *        initialize an empty bracket and a bracket that has been modified, to 
+ *        save the bracket, print the bracket, and have the user modify the
+ *        bracket by advancing winners through. A bracket that has been saved
+ *        must be initialized through fill_bracket(), NOT init_bracket(). init
+ *        is solely for a list of teams with seeds, not matchups (see file in
+ *        resources/new and resources/saved).
+ */
 class bracket : public utils
 {
     public:
@@ -28,11 +40,16 @@ class bracket : public utils
 
         bracket & operator = (const bracket &); // Copy assignment operator
 
+        // Initialize bracket with a file with teams with seeds
         void init_bracket(const std::string & _file_name);
+        // Initialize bracket with a previously modified bracket file
         void fill_bracket(const std::string & _file_name);
+        // Save bracket to the file system
         void save_bracket(const std::string & _file_name) const;
+        // Print bracket to screen
         void draw() const;
-        void user_decide_winner();
+        // Have user pick a team to advance
+        void user_advance_winner();
     
     protected:
         node * root;            // Root of bracket tree
@@ -40,6 +57,7 @@ class bracket : public utils
         int    bracket_gap;     // Padding between outermost bracket spots
 
     private:
+        // Various helper functions for the public methods
         void copy_bracket(const bracket &);
         void copy_bracket(node *&, node *);
         void init(int);
