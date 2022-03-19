@@ -58,7 +58,7 @@ void team::display() const
 
 /**
  * @brief Displays team in one line, condensed format, shown below...
- * ==EXAMPLE==
+ * EXAMPLE:
  * ## CENTRAL CA
  */
 void team::display_in_bracket() const
