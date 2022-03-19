@@ -65,7 +65,7 @@ void bracket_driver::start()
 /**
  * @brief Prints main menu and takes input from user via stdin
  * 
- * @return int of option to run (1: new bracket, 2: existing bracket, 3: delete
+ * @return int: option to run (1: new bracket, 2: existing bracket, 3: delete
  *              bracket, 0: quit program)
  */
 int bracket_driver::read_menu_option()

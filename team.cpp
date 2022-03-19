@@ -40,7 +40,7 @@ void team::set_team(string _school_name, int _wins, int _losses, int _ties, int 
 
 /**
  * @brief Displays team in listed format, shown below.
- * ==EXAMPLE==
+ * EXAMPLE:
  * CENTRAL CATHOLIC: 
  * #-#-#
  * Seed: ##
