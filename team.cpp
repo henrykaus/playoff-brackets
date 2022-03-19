@@ -2,6 +2,8 @@
  * @file team.cpp
  * @author Henry Kaus (https://github.com/henrykaus)
  * @brief Holds method definitions for the team class.
+ * 
+ * @copyright Copyright (c) 2022
  */
 #include "team.h"
 using namespace std;
