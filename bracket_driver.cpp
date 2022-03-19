@@ -1,16 +1,24 @@
 /**
  * @file bracket_driver.cpp
  * @author Henry Kaus (https://github.com/henrykaus)
- * @brief 
+ * @brief Holds method definitions for the bracket_driver class which controls
+ *        the user interface.
+ * 
+ * @copyright Copyright (c) 2022
  */
 #include "bracket_driver.h"
 using namespace std;
 
-// Default Constructor
+// Default constructor
 bracket_driver::bracket_driver() : input_file("NONE")
 {}
 
 
+/**
+ * @brief Starts and runs the overall bracket generator program by taking input
+ *        and choosing methods to run from therein.
+ * NOTE: To use the program, create a bracket_driver object, and call start()
+ */
 void bracket_driver::start()
 {
     vector<string> file_options;    // File names in directory
@@ -54,6 +62,12 @@ void bracket_driver::start()
 }
 
 
+/**
+ * @brief Prints main menu and takes input from user via stdin
+ * 
+ * @return int of option to run (1: new bracket, 2: existing bracket, 3: delete
+ *              bracket, 0: quit program)
+ */
 int bracket_driver::read_menu_option()
 {
     int option;
@@ -72,8 +86,17 @@ int bracket_driver::read_menu_option()
 }
 
 
+/**
+ * @brief Fills a vector of strings with all entries in a directory
+ * 
+ * @param _files is a std::vector<std::string> to fill with directory entries 
+ *               (must be empty)
+ * @param _path is a string path to directory to get entries of
+ */
 void bracket_driver::get_files(vector<string> & _files, const string & _path)
 {
+    if (_files.size() > 0)
+        throw invalid_argument("Vector argument is non-empty");
     // Get all files in directory
     for (const auto & entry : filesystem::directory_iterator(_path))
         _files.push_back(entry.path().filename().string());
@@ -84,6 +107,15 @@ void bracket_driver::get_files(vector<string> & _files, const string & _path)
 }
 
 
+/**
+ * @brief Lets user pick a bracket to view, fills bracket, allows for
+ *        modification, and saves the bracket.
+ * 
+ * @param _file_options is a std::vector<std::string> of possible brackets to 
+ *                      view 
+ * @param _editing_existing is if user has previously selected to edit existing 
+ *                          bracket
+ */
 void bracket_driver::modify_bracket(const std::vector<std::string> & _file_options, bool _editing_existing)
 {
     // Get menu choice
@@ -102,6 +134,13 @@ void bracket_driver::modify_bracket(const std::vector<std::string> & _file_optio
 }
 
 
+/**
+ * @brief Reads should via stdin on user's choice of bracket to open
+ * 
+ * @param _file_options is std::vector<std::string> of possible files to open 
+ * @return true if user selected a file to open
+ * @return false if user selected to go back a menu
+ */
 bool bracket_driver::read_bracket_choice(const vector<string> & _file_options)
 {
     int option;     // Menu choice
@@ -125,6 +164,11 @@ bool bracket_driver::read_bracket_choice(const vector<string> & _file_options)
 }
 
 
+/**
+ * @brief Calls bracket::fill_bracket() with path to file
+ * 
+ * @param _editing_existing is if user is editing an existing bracket
+ */
 void bracket_driver::fill_bracket(bool _editing_existing)
 {
     if (_editing_existing)
@@ -134,6 +178,9 @@ void bracket_driver::fill_bracket(bool _editing_existing)
 }
 
 
+/**
+ * @brief Has user view and edit bracket until they decide to quit
+ */
 void bracket_driver::view_edit_bracket()
 {
     char option;
@@ -155,6 +202,12 @@ void bracket_driver::view_edit_bracket()
 }
 
 
+/**
+ * @brief Saves a file to filesystem by asking user to save changes and for a 
+ *        file name if appropriate.
+ * 
+ * @param _editing_existing is if the user is editing an existing file
+ */
 void bracket_driver::save(bool _editing_existing)
 {
     string output_file; // File to save to
@@ -193,6 +246,12 @@ void bracket_driver::save(bool _editing_existing)
 }
 
 
+/**
+ * @brief Reads in name of file to save bracket as with error checking
+ * 
+ * @param _output_file is the file name to save the bracket as (is updated in 
+ *                     method)
+ */
 void bracket_driver::read_output_file(string & _output_file)
 {
     cout << "What would you like to save the file as? " << endl
@@ -212,6 +271,13 @@ void bracket_driver::read_output_file(string & _output_file)
 }
 
 
+/**
+ * @brief Checks if file name exists in the 'saved' directory
+ * 
+ * @param _output_file is the file name to check for
+ * @return true if file exists in 'saved' directory
+ * @return false if file doesn't exist in 'saved' directory
+ */
 bool bracket_driver::check_file_exists(const string & _output_file)
 {
     vector<string> reserved_files;  // Files in resources/saved
@@ -231,6 +297,12 @@ bool bracket_driver::check_file_exists(const string & _output_file)
 }
 
 
+/**
+ * @brief Deletes bracket from 'saved' directory by choosing an option and
+ *        asking for confirmation
+ * 
+ * @param _file_options are the possible files to delete from directory
+ */
 void bracket_driver::delete_bracket(const vector<string> & _file_options)
 {
     int    option;                                      // Menu choice
