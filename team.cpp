@@ -41,18 +41,14 @@ void team::set_team(string _school_name, int _wins, int _losses, int _ties, int 
 /**
  * @brief Displays team in listed format, shown below.
  * EXAMPLE:
- * CENTRAL CATHOLIC: 
- * #-#-#
- * Seed: ##
+ * CENTRAL CATHOLIC | Record: #-#-# | Seed: ##
  */
 void team::display() const
 {
-    cout << school_name << ": " << endl
-         << wins << "-" << losses;
+    cout << school_name << " | Record: "<< wins << "-" << losses;
     if (ties > 0)
         cout << '-' << ties;
-    cout << endl
-         << "Seed: " << seed << endl;
+    cout << " | Seed: " << seed << endl;
 }
 
 
@@ -138,16 +134,64 @@ void team::print_for_file(std::ostream & outFile) const
 /**
  * @brief Reads team from a file to fill in team attributes. Format is below...
  * FORMAT: SCHOOL_NAME;WINS;LOSSES;TIES;SEED
- * @param inFile is the input stream (or ifstream)
+ * @param in is the input stream (or ifstream)
  */
-void team::read_team(std::istream & inFile)
+void team::read_team(std::istream & in, char delim)
 {
-    getline(inFile, school_name, ';');
-    inFile >> wins;
-    inFile.ignore();
-    inFile >> losses;
-    inFile.ignore();
-    inFile >> ties;
-    inFile.ignore();
-    inFile >> seed;
+    getline(in, school_name, delim);
+    in >> wins;
+    in.ignore();
+    in >> losses;
+    in.ignore();
+    in >> ties;
+    in.ignore();
+    in >> seed;
+}
+
+
+/**
+ * @brief Asks for an attribute to edit and takes new input for attribute.
+ */
+void team::edit_team()
+{
+    int option; // User option for menu
+
+    // Print menu, get attribute to edit
+    cout << "What team attribute would you like to edit:" << endl 
+         << "   [1] Name" << endl
+         << "   [2] Wins" << endl
+         << "   [3] Losses" << endl
+         << "   [4] Ties" << endl
+         << "   [5] Seed" << endl
+         << "   [0] None" << endl
+         << " -> ";
+    option = integer_input(cin, " -> ", 0, 6);
+    cin.ignore(10000, '\n');
+
+    // Edit attribute
+    switch (option)
+    {
+        case 1:
+            cout << "Name: ";
+            getline(cin, this->school_name, '\n');
+            break;
+        case 2:
+            cout << "Wins: ";
+            this->wins = integer_input(cin, " -> ", 0);
+            break;
+        case 3:
+            cout << "Losses: ";
+            this->losses = integer_input(cin, " -> ", 0);
+            break;
+        case 4:
+            cout << "Ties: ";
+            this->ties = integer_input(cin, " -> ", 0);
+            break;
+        case 5:
+            cout << "Seed: ";
+            this->seed = integer_input(cin, " -> ", 1);
+            break;
+        default:
+            break;
+    }
 }

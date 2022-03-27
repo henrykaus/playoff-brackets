@@ -28,7 +28,7 @@ void bracket_driver::start()
     do {
         file_options.clear();
 
-        switch (menu_option = read_menu_option())
+        switch (menu_option = read_main_menu_option())
         {
             case 0:         // Quit program
                 break;
@@ -51,9 +51,12 @@ void bracket_driver::start()
                 }
                 modify_bracket(file_options, file_exists);
                 break;
-            case 3:         // Delete exisiting file
+            case 3:         // Delete existing file
                 get_files(file_options, "resources\\saved");
                 delete_bracket(file_options);
+                break;
+            case 4:         // Create a new starter bracket
+                create_a_bracket();
                 break;
             default:
                 break;
@@ -66,9 +69,9 @@ void bracket_driver::start()
  * @brief Prints main menu and takes input from user via stdin
  * 
  * @return int: option to run (1: new bracket, 2: existing bracket, 3: delete
- *              bracket, 0: quit program)
+ *              bracket, 4: new starter bracket, 0: quit program)
  */
-int bracket_driver::read_menu_option()
+int bracket_driver::read_main_menu_option()
 {
     int option;
 
@@ -76,34 +79,14 @@ int bracket_driver::read_menu_option()
          << "  [1] Create a New Bracket" << endl
          << "  [2] Select an Existing Bracket" << endl
          << "  [3] Delete an Existing Bracket" << endl
+         << "  [4] Create a New Starter Bracket" << endl
          << "  [0] Quit the Program" << endl
          << "-> ";
 
-    option = integer_input(cin, "-> ", 0, 3);
+    option = integer_input(cin, "-> ", 0, 4);
     cout << endl;
 
     return option;
-}
-
-
-/**
- * @brief Fills a vector of strings with all entries in a directory
- * 
- * @param _files is a std::vector<std::string> to fill with directory entries 
- *               (must be empty)
- * @param _path is a string path to directory to get entries of
- */
-void bracket_driver::get_files(vector<string> & _files, const string & _path)
-{
-    if (_files.size() > 0)
-        throw invalid_argument("Vector argument is non-empty");
-    // Get all files in directory
-    for (const auto & entry : filesystem::directory_iterator(_path))
-        _files.push_back(entry.path().filename().string());
-    
-    // Throw error if empty directory
-    if (_files.size() < 1)
-        throw invalid_argument("No files in the selection, please try adding one to resources\\new.");
 }
 
 
@@ -226,7 +209,7 @@ void bracket_driver::save(bool _editing_existing)
         // Get file name from user for new file
         read_output_file(output_file);
         // If exists, ask for confirmation
-        while (check_file_exists(output_file))
+        while (check_file_exists(output_file, "resources\\saved"))
         {
             cout << endl;
             if (are_you_sure(cin, "This file name already exists, would you still like to save to this file"))
@@ -243,57 +226,6 @@ void bracket_driver::save(bool _editing_existing)
 
     cout << "Saving progress..." << endl << endl;
     bracket::save_bracket("resources\\saved\\" + output_file);
-}
-
-
-/**
- * @brief Reads in name of file to save bracket as with error checking
- * 
- * @param _output_file is the file name to save the bracket as (is updated in 
- *                     method)
- */
-void bracket_driver::read_output_file(string & _output_file)
-{
-    cout << "What would you like to save the file as? " << endl
-         << "-> ";
-    getline(cin, _output_file);
-
-    // Disallow forbidden characters in file name
-    while (_output_file.find('\\') != string::npos || _output_file.find('/') != string::npos)
-    {
-        _output_file.clear();
-        cout << "Do not use \\ or / in your name..." << endl
-             << "-> ";
-        getline(cin, _output_file);
-    }
-
-    _output_file.append(".txt");
-}
-
-
-/**
- * @brief Checks if file name exists in the 'saved' directory
- * 
- * @param _output_file is the file name to check for
- * @return true if file exists in 'saved' directory
- * @return false if file doesn't exist in 'saved' directory
- */
-bool bracket_driver::check_file_exists(const string & _output_file)
-{
-    vector<string> reserved_files;  // Files in resources/saved
-
-    // resources/saved can be a size of 0, so ignore the throw
-    try {
-        get_files(reserved_files, "resources\\saved");
-    } catch (...) {}
-
-    // If the file name exists, return that it exists
-    for (int i = 0; i < (int)reserved_files.size(); ++i)
-    {
-        if (reserved_files[i] == _output_file)
-            return true;
-    }
-    return false;
 }
 
 
@@ -334,4 +266,80 @@ void bracket_driver::delete_bracket(const vector<string> & _file_options)
     }
 
     cout << _file_options[option - 1].c_str() << " was removed." << endl << endl;
+}
+
+
+/**
+ * @brief Menu system and functionality for creating a starter bracket.
+ */
+void bracket_driver::create_a_bracket()
+{
+    int    menu_option;     // Menu choice
+    string team_to_remove;
+    
+    do {
+        switch (menu_option = read_creator_menu_option())
+        {
+            case 0:         // Discard and go back
+                creator.clear();
+                break;
+            case 1:         // Add teams
+                creator.input_teams();
+                cout << endl;
+                break;
+            case 2:         // Remove teams
+                cout << "Which team would you like to remove:" << endl << " -> ";
+                getline(cin, team_to_remove);
+                if (creator.remove_team(team_to_remove))
+                    cout << team_to_remove << " removed." << endl << endl;
+                else
+                    cout << team_to_remove << " does not exist." << endl << endl;
+                break;
+            case 3:         // Edit teams
+                creator.edit_specific();
+                cout << endl;
+                break;
+            case 4:         // Print bracket
+                creator.print();
+                cout << endl;
+                break;
+            case 5:         // Save
+                if (!creator.save())
+                {
+                    cout << "Saving failed, please ensure you have 2^n teams"
+                         << " and valid seeds for each team." << endl << endl;
+                    menu_option = -1;
+                }
+                break;
+            default:
+                break;
+        }
+    } while (menu_option != 0 && menu_option != 5);
+}
+
+
+/**
+ * @brief Prints creator menu and takes input from user via stdin
+ * 
+ * @return int: option to run (1: add teams, 2: remove teams, 3: edit teams,
+ *              4: save, 5: print bracket, 0: discard and go back)
+ */
+int bracket_driver::read_creator_menu_option()
+{
+    int option;
+
+    cout << "What would you like to do?" << endl
+         << "  [1] Add Teams" << endl
+         << "  [2] Remove Teams" << endl
+         << "  [3] Edit Teams" << endl
+         << "  [4] Print Bracket" << endl
+         << "  [5] Save and Go Back" << endl
+         << "  [0] Discard Changes and Go Back" << endl
+         << "-> ";
+
+    option = integer_input(cin, "-> ", 0, 5);
+    cin.ignore(10000, '\n');
+    cout << endl;
+
+    return option;
 }

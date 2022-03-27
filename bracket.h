@@ -30,7 +30,7 @@ static const int SIZE_PAIR_PADDING = 18;    // Size of matchup pair in print
  *        is solely for a list of teams with seeds, not matchups (see file in
  *        resources/new and resources/saved).
  */
-class bracket : public utils
+class bracket : protected utils
 {
     public:
         bracket();                  // Default constructor

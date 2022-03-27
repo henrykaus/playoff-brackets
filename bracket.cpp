@@ -127,9 +127,9 @@ void bracket::fill_bracket(ifstream & inFile, node *& _root)
         pair<team, team> spot;
         bool             has_children;
 
-        spot.first.read_team(inFile);
+        spot.first.read_team(inFile, ';');
         inFile.ignore();
-        spot.second.read_team(inFile);
+        spot.second.read_team(inFile, ';');
         inFile.ignore();
         inFile >> has_children;
         inFile.ignore();
@@ -164,7 +164,7 @@ void bracket::init_bracket(const string & _file_name)
     inFile.peek();
     while (!inFile.eof() && !inFile.fail())
     {
-        temp_team.read_team(inFile);
+        temp_team.read_team(inFile, ';');
         inFile.ignore();
         unordered_teams.push(temp_team);
         ++num_teams;

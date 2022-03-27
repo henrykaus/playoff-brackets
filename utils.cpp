@@ -117,3 +117,77 @@ char utils::y_n_input(std::istream & in, const char * _msg) const
     
     return option;
 }
+
+
+/**
+ * @brief Reads in name of file to save bracket as with error checking
+ * 
+ * @param _output_file is the file name to save into (is updated in method)
+ */
+void utils::read_output_file(string & _output_file) const
+{
+    cout << "What would you like to save the file as? " << endl
+         << "-> ";
+    getline(cin, _output_file);
+
+    // Disallow forbidden characters in file name
+    while (_output_file.find('\\') != string::npos || _output_file.find('/') != string::npos)
+    {
+        _output_file.clear();
+        cout << "Do not use \\ or / in your name..." << endl
+             << "-> ";
+        getline(cin, _output_file);
+    }
+
+    _output_file.append(".txt");
+}
+
+
+/**
+ * @brief Fills a vector of strings with all entries in a directory
+ * 
+ * @param _files is a std::vector<std::string> to fill with directory entries 
+ *               (must be empty)
+ * @param _path is a string path to directory to get entries of
+ */
+void utils::get_files(vector<string> & _files, const string & _path) const
+{
+    if (_files.size() > 0)
+        throw invalid_argument("Vector argument is non-empty");
+    // Get all files in directory
+    for (const auto & entry : filesystem::directory_iterator(_path))
+        _files.push_back(entry.path().filename().string());
+    
+    // Throw error if empty directory
+    if (_files.size() < 1)
+        throw invalid_argument("No files in the selection, please try adding one to resources\\new.");
+}
+
+
+/**
+ * @brief Checks if file name exists in the 'saved' directory
+ * 
+ * @param _output_file is the file name to check for
+ * @param _path is the path to read files from
+ * @return true if file exists in 'saved' directory
+ * @return false if file doesn't exist in 'saved' directory
+ */
+bool utils::check_file_exists(const string & _output_file, const char * _path) const
+{
+    vector<string> reserved_files;  // Files in resources/saved
+
+    if (!_path)
+        throw invalid_argument("Path must be non-null");
+    // resources/saved can be a size of 0, so ignore the throw
+    try {
+        this->get_files(reserved_files, _path);
+    } catch (...) {}
+
+    // If the file name exists, return that it exists
+    for (int i = 0; i < (int)reserved_files.size(); ++i)
+    {
+        if (reserved_files[i] == _output_file)
+            return true;
+    }
+    return false;
+}

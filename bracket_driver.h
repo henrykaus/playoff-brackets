@@ -11,11 +11,11 @@
 #ifndef BRACKET_DRIVER
 #define BRACKET_DRIVER
 
-#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
 #include "bracket.h"
+#include "bracket_creator.h"
 
 /**
  * @brief Holds methods for the user interface to interact with brackets by
@@ -33,22 +33,24 @@ class bracket_driver : public bracket
         void start();
         
     private:
-        int  read_menu_option();
-        void get_files(std::vector<std::string> & files, 
-            const std::string & path);
+        int  read_main_menu_option();
         void modify_bracket(const std::vector<std::string> & _file_options, 
             bool _editing_existing);
         bool read_bracket_choice(const std::vector<std::string> & files_options);
         void fill_bracket(bool _editing_existing);
         void view_edit_bracket();
         void save(bool _editing_existing);
-        void read_output_file(std::string & output_file);
-        bool check_file_exists(const std::string & _output_file);
         void delete_bracket(const std::vector<std::string> & _file_options);
+
+        void create_a_bracket();
+        int  read_creator_menu_option();
+
+
 
     protected:
         std::string input_file; // File that the bracket was read from 
                                 // (file_name.txt)
+        bracket_creator creator;
 };
 
 #endif

@@ -10,6 +10,9 @@
 #define UTILS
 
 #include <iostream>
+#include <vector>
+#include <string>
+#include <filesystem>
 
 /**
  * @brief Holds utility methods for testing if an int is a power of two, getting
@@ -28,6 +31,9 @@ class utils
         bool are_you_sure(std::istream & in, const char * _msg = nullptr, bool print_newline = false) const;
         // Gets Y or N input
         char y_n_input(std::istream & in, const char * _msg = nullptr) const;
+        void read_output_file(std::string &) const;
+        void get_files(std::vector<std::string> &, const std::string &) const;
+        bool check_file_exists(const std::string &, const char *) const;
 };
 
 #endif
