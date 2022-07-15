@@ -9,6 +9,8 @@
 #include "bracket_driver.h"
 using namespace std;
 
+// Cypress is a strange thing, isn't it
+
 // Default constructor
 bracket_driver::bracket_driver() : input_file("NONE")
 {}
