@@ -1,3 +1,11 @@
+/**
+ * @file bracket.cpp
+ * @author Henry Kaus (https://github.com/henrykaus)
+ * @brief Holds method definitions for the bracket class which controls a fully
+ *        featured BST for a modifiable bracket. 
+ * 
+ * @copyright Copyright (c) 2022
+ */
 #include "bracket.h"
 using namespace std;
 
@@ -7,12 +15,19 @@ bracket::bracket() : root(nullptr)
     init(32);
 }
 
+
 // Copy Constructor
 bracket::bracket(const bracket & _source) : root(nullptr)
 {
     copy_bracket(_source);
 }
 
+
+/**
+ * @brief private helper to deep copy from a source bracket to this one
+ * 
+ * @param _source is a bracket to deep copy from
+ */
 void bracket::copy_bracket(const bracket & _source)
 {
     bracket_spots = _source.bracket_spots;
@@ -22,6 +37,13 @@ void bracket::copy_bracket(const bracket & _source)
         copy_bracket(root, _source.root);
 }
 
+
+/**
+ * @brief a private helper to recursively deep copy a bracket
+ * 
+ * @param _dest_root is the destination node for copy
+ * @param _source_root is the source node for copying from
+ */
 void bracket::copy_bracket(node *& _dest_root, node * _source_root)
 {
     if (_source_root)
@@ -34,12 +56,15 @@ void bracket::copy_bracket(node *& _dest_root, node * _source_root)
         _dest_root = nullptr;
 }
 
+
 // Parameterized Constructor
 bracket::bracket(int _bracket_teams) : root(nullptr)
 {
     init(_bracket_teams);
 }
 
+
+// Copy Assignment Operator
 bracket & bracket::operator = (const bracket & _source)
 {
     if (this != &_source)
@@ -47,6 +72,14 @@ bracket & bracket::operator = (const bracket & _source)
     return *this;
 }
 
+
+/**
+ * @brief a private helper to initialize the bracket with a number of teams
+ * 
+ * @param _bracket_teams is the number of teams that the bracket will have
+ *        (1) Must be a power of 2
+ * @throws invalid_argument if the number of teams is 1 or not a power of 2
+ */
 void bracket::init(int _bracket_teams)
 {
     bracket_spots = 0;
@@ -62,12 +95,25 @@ void bracket::init(int _bracket_teams)
     create_tree();
 }
 
+
+/**
+ * @brief private helper that creates the bracket team based on the number of
+ *        bracket_spots
+ */
 void bracket::create_tree()
 {
     root = new node();
     create_tree(root, 0, log2(bracket_spots+1) - 1);
 }
 
+
+/**
+ * @brief recursively creates a complete, balanced tree based on a maximum depth
+ * 
+ * @param _curr_root is the current node in the bracket
+ * @param _curr_depth is the current depth down the tree
+ * @param _max_depth is the max depth that the tree should be
+ */
 void bracket::create_tree(node * _curr_root, int _curr_depth, int _max_depth)
 {
     if (_curr_depth < _max_depth)
@@ -79,12 +125,17 @@ void bracket::create_tree(node * _curr_root, int _curr_depth, int _max_depth)
     }
 }
 
+
 // Destructor
 bracket::~bracket()
 {
     erase();
 }
 
+
+/**
+ * @brief private helper that erases the tree
+ */
 void bracket::erase()
 {
     erase(root);
@@ -93,6 +144,12 @@ void bracket::erase()
     bracket_gap   = 0;
 }
 
+
+/**
+ * @brief recursive private helper that erases the tree
+ * 
+ * @param _curr_root is the current root in the tree
+ */
 void bracket::erase(node * _curr_root)
 {
     if (_curr_root)
@@ -103,6 +160,13 @@ void bracket::erase(node * _curr_root)
     }
 }
 
+
+/**
+ * @brief opens a file and copies the bracket from a file. The bracket must have
+ *        already been modified.
+ * 
+ * @param _file_name is the name of the file that holds the modified bracket.
+ */
 void bracket::fill_bracket(const string & _file_name)
 {
     ifstream        inFile;             // Input stream
@@ -119,6 +183,13 @@ void bracket::fill_bracket(const string & _file_name)
     inFile.close();
 }
 
+
+/**
+ * @brief recursive helper that fills in the bracket with teams from a local file
+ * 
+ * @param inFile is the file stream where data is incoming
+ * @param _root is the current node of the tree where the current team will go
+ */
 void bracket::fill_bracket(ifstream & inFile, node *& _root)
 {
     inFile.peek();
@@ -146,7 +217,12 @@ void bracket::fill_bracket(ifstream & inFile, node *& _root)
     }
 }
 
-// Initializes bracket from data file using fstream
+
+/**
+ * @brief initializes bracket from data file using fstream
+ * 
+ * @param _file_name is the name of file for unmodified bracket
+ */
 void bracket::init_bracket(const string & _file_name)
 {
     ifstream      inFile;             // Input stream
@@ -219,7 +295,15 @@ void bracket::init_bracket(const string & _file_name)
     delete [] ordered_teams;
 }
 
-team ** bracket::order_comp_bracket(team ** _ordered_teams, int _size)
+
+/**
+ * @brief sorts teams into a seeded matchup order
+ * 
+ * @param _ordered_teams is teams in a low-high sort based on seed
+ * @param _size is the number of teams
+ * @return is the teams in the seeded matchup order
+ */
+team ** bracket::order_comp_bracket(team ** _ordered_teams, int _size)              // TODO: Is the return even necessary?
 {
     int group_size = 1;    // How many teams are shifting
     int i, target_index;   // Iterators
@@ -260,6 +344,14 @@ team ** bracket::order_comp_bracket(team ** _ordered_teams, int _size)
     return _ordered_teams;
 }
 
+
+/**
+ * @brief private helper that fills the bracket based on the competition ordered
+ *        teams.
+ * 
+ * @param _comp_ordered_teams is the teams in an order after order_comp_bracket()
+ * @param _num_teams is the number of teams
+ */
 void bracket::fill_bracket(team ** _comp_ordered_teams, int _num_teams)
 {
     int curr_index = 0;     // Requires referenced int
@@ -272,6 +364,15 @@ void bracket::fill_bracket(team ** _comp_ordered_teams, int _num_teams)
     fill_bracket(root, _comp_ordered_teams, curr_index);
 }
 
+
+/**
+ * @brief recursive helper that fills the bracket based on the competition
+ *        ordered teams.
+ * 
+ * @param _root is the current node to be filled with a matchup
+ * @param _comp_ordered_teams is the array of ordered teams
+ * @param _curr_index is the current index in the teams array
+ */
 void bracket::fill_bracket(node * _root, team ** _comp_ordered_teams,
     int & _curr_index)
 {
@@ -288,6 +389,12 @@ void bracket::fill_bracket(node * _root, team ** _comp_ordered_teams,
     }
 }
 
+
+/**
+ * @brief saves the modified bracket to a filename
+ * 
+ * @param _file_name is the file to save the data to
+ */
 void bracket::save_bracket(const string & _file_name) const
 {
     ofstream outFile;   // File ostream
@@ -297,6 +404,13 @@ void bracket::save_bracket(const string & _file_name) const
     outFile.close();
 }
 
+
+/**
+ * @brief recursively saves the modified bracket to the output stream 
+ * 
+ * @param outFile is the output stream being saved to
+ * @param _root is the current node being saved from
+ */
 void bracket::save_bracket(ofstream & outFile, node * _root) const
 {
     if (_root)
@@ -319,7 +433,11 @@ void bracket::save_bracket(ofstream & outFile, node * _root) const
     }
 }
 
-void bracket::draw() const
+
+/**
+ * @brief draws the bracket on the screen with a header and all teams
+ */
+void bracket::draw() const                                                        
 {
     int max_depth = log2(bracket_spots + 1) - 1;    // Max depth of tree
     int num_columns = max_depth*2 + 1;              // Number of columns for bracket
@@ -348,6 +466,16 @@ void bracket::draw() const
     draw_pair(root->get_pair(), bracket_gap/2 + SIZE_PAIR_PADDING/2);
 }
 
+
+/**
+ * @brief recursively draws the bracket going down the root's left tree and right
+ *        tree simultaneously
+ * 
+ * @param _left_root is the left tree's current node to print
+ * @param _right_root is the right tree's current node to print
+ * @param _curr_depth is the current depth in the tree
+ * @param _max_depth is the current maximum depth of the tree
+ */
 void bracket::draw(node * _left_root, node * _right_root, int _curr_depth,
     int & _max_depth) const
 {
@@ -364,7 +492,14 @@ void bracket::draw(node * _left_root, node * _right_root, int _curr_depth,
     }
 }
 
-// Draws two mirrored playoff spots
+
+/**
+ * @brief draws two mirrored playoff matchups on opposite sides of the screen
+ * 
+ * @param _left_spot is the left matchup to print
+ * @param _right_spot is the right matchup to print
+ * @param _left_padding is the padding to the left of the left matchup
+ */
 void bracket::draw_pairs(const pair<team, team> & _left_spot, 
                          const pair<team, team> & _right_spot, 
                          int _left_padding) const
@@ -410,7 +545,13 @@ void bracket::draw_pairs(const pair<team, team> & _left_spot,
     cout << "|\n";
 }
 
-// Draws one bracket spot
+
+/**
+ * @brief draws one matchup (bracket spot)
+ * 
+ * @param spot is the matchup to print
+ * @param _left_padding is the padding to the left of the matchup
+ */
 void bracket::draw_pair(const pair<team, team> & _spot, 
                         int _left_padding) const
 {
@@ -435,6 +576,10 @@ void bracket::draw_pair(const pair<team, team> & _spot,
     cout << "|" << endl;
 }
 
+
+/**
+ * @brief takes input from user to attempt to advance a team in the bracket
+ */
 void bracket::user_advance_winner()
 {
     int  team_rank;
@@ -450,11 +595,31 @@ void bracket::user_advance_winner()
         cout << "Changes made if necessary." << endl;
 }
 
+
+/**
+ * @brief a wrapper to search the bracket for a team to advance
+ * 
+ * @param _rank is the rank of the team to search for
+ * @return if the team has been advanced
+ */
 bool bracket::search_and_decide(int _rank)
 {
     return search_and_decide(root, nullptr, 'X', _rank);
 }
 
+
+/**
+ * @brief searches the bracket for a team to advance. Will not advance the team if...
+ *        (1) the rank does not exist
+ *        (2) the rank was out of the running
+ *        (3) the rank currently has no matchup
+ * 
+ * @param _root is the current node to look for the team
+ * @param _parent is where the team would be advanced to
+ * @param _dir (L/R) which direction was just traveled
+ * @param _rank is the rank to look for
+ * @return if the team had been advanced
+ */
 bool bracket::search_and_decide(node * _root, node * _parent, char _dir, int _rank)
 {
     if (_root)
@@ -501,6 +666,14 @@ bool bracket::search_and_decide(node * _root, node * _parent, char _dir, int _ra
         return false;
 }
 
+
+/**
+ * @brief adds the team to the advancement position
+ * 
+ * @param _winner is the team to advance
+ * @param _parent is the bracket spot to advance to
+ * @param _dir is the position in the spot to move the team to
+ */
 void bracket::advance_winner(const team & _winner, node * _parent, char _dir)
 {
     // Case for if the final game

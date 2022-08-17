@@ -1,3 +1,11 @@
+/**
+ * @file bracket_creator.cpp
+ * @author Henry Kaus (https://github.com/henrykaus)
+ * @brief Holds method definitions for the bracket_creator class which controls
+ *        the interface for creating a starter bracket.
+ * 
+ * @copyright Copyright (c) 2022
+ */
 #include "bracket_creator.h"
 using namespace std;
 
@@ -83,13 +91,28 @@ void bracket_creator::input_teams()
 {
     team team_to_add;
     bool quit = false;
+    bool successful_input;
 
     cout << "Enter a team in this format -> TEAM_NAME:WINS:LOSSES:TIES:SEED"
          << endl << "    To quit, enter -> 0:0:0:0:0" << endl;
 
-    cout << " -> ";
-    team_to_add.read_team(cin, ':');
-    cin.ignore(10000, '\n');
+    do
+    {
+        try
+        {
+            successful_input = true;
+            cout << "-> ";
+            team_to_add.read_team(cin, ':');
+            cin.ignore(10000, '\n');
+        }
+        catch (invalid_argument err)
+        {
+            cin.ignore(10000, '\n');
+            cout << err.what() << endl;
+            successful_input = false;
+        }
+    }
+    while (!successful_input);
 
     quit = team_to_add.same_name("0");
     while (!quit)
