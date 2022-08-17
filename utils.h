@@ -10,6 +10,7 @@
 #define UTILS
 
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <string>
 #include <filesystem>
@@ -25,6 +26,8 @@ class utils
         bool is_pow_two(int _num) const;    // Checks if integer is power of two
         // Gets error checked input for an integer
         int  integer_input(std::istream & in, const char * _err_msg = nullptr, int _min = INT_MIN, int _max = INT_MAX) const;
+        // Gets input for an integer that throws an error on failure
+        int  integer_input_throw(std::istream & in, const char * _err_msg = "Error", int _min = INT_MIN, int _max = INT_MAX) const;
         // Gets error checked input for a capital character
         char capital_char_input(std::istream & in) const;
         // Checks if user wants to continue

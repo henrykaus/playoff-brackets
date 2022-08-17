@@ -85,13 +85,12 @@ bool bracket_creator::remove_team(const std::string & _team_to_remove)
 /**
  * @brief Takes input from user for teams to add to list until user inputs.
  *        0:0:0:0:0 to signal a stop
- * FIXME: Does not check for bad input
  */
 void bracket_creator::input_teams()
 {
     team team_to_add;
-    bool quit = false;
     bool successful_input;
+    bool quit = false;
 
     cout << "Enter a team in this format -> TEAM_NAME:WINS:LOSSES:TIES:SEED"
          << endl << "    To quit, enter -> 0:0:0:0:0" << endl;
@@ -100,30 +99,21 @@ void bracket_creator::input_teams()
     {
         try
         {
-            successful_input = true;
             cout << "-> ";
-            team_to_add.read_team(cin, ':');
+            team_to_add.read_team(':');
             cin.ignore(10000, '\n');
+
+            quit = team_to_add.same_name("0");
+            if (!quit) this->add_team(team_to_add);
+            successful_input = true;
         }
-        catch (invalid_argument err)
+        catch(invalid_argument err)
         {
-            cin.ignore(10000, '\n');
             cout << err.what() << endl;
             successful_input = false;
         }
     }
-    while (!successful_input);
-
-    quit = team_to_add.same_name("0");
-    while (!quit)
-    {
-        this->add_team(team_to_add);
-        cout << " -> ";
-        team_to_add.read_team(cin, ':');
-        cin.ignore(10000, '\n');
-
-        quit = team_to_add.same_name("0");
-    }
+    while (!quit || !successful_input);
 }
 
 

@@ -50,6 +50,32 @@ int utils::integer_input(std::istream & in, const char * _err_msg, int _min, int
     return number;
 }
 
+/**
+ * @brief Gets input for an integer
+ * 
+ * @param in is the input stream
+ * @param _err_msg is the error message to throw (default: "Unknown")
+ * @param _min is the minimum integer the number can be (default: INT_MIN)
+ * @param _max is the maximum integer the number can be (default: INT_MAX)
+ * @return int of the number the user input
+ */
+int utils::integer_input_throw(std::istream & in, const char * _err_msg, int _min, int _max) const
+{
+    int number;     // Temp number for user to enter into
+
+    // Gets number from user as long as valid and between _min and _max (inclusive)
+    in >> number;
+    while (in.fail() || number < _min || number > _max)
+    {
+        in.clear();
+        in.ignore(10000, '\n');
+        if (_err_msg)
+            throw invalid_argument(_err_msg);
+        in >> number;
+    }
+
+    return number;
+}
 
 /**
  * @brief Gets a character from user and return the uppercase variant.

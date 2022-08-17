@@ -12,6 +12,7 @@ using namespace std;
 team::team() : school_name("NONE"), wins(0), losses(0), ties(0), seed(0)
 {}
 
+
 // Param. Constructor
 team::team(string _school_name, int _wins, int _losses, int _ties, int _seed)
     : school_name(_school_name), wins(_wins), losses(_losses), ties(_ties),
@@ -135,6 +136,7 @@ void team::print_for_file(std::ostream & outFile) const
  * @brief Reads team from a file to fill in team attributes. Format is below...
  * FORMAT: SCHOOL_NAME;WINS;LOSSES;TIES;SEED
  * @param in is the input stream (or ifstream)
+ * @param delim is the delimeter between each field
  */
 void team::read_team(std::istream & in, char delim)
 {
@@ -146,6 +148,24 @@ void team::read_team(std::istream & in, char delim)
     in >> ties;
     in.ignore();
     in >> seed;
+}
+
+
+/**
+ * @brief Reads team from user input at command line. Format is below...
+ * FORMAT: SCHOOL_NAME;WINS;LOSSES;TIES;SEED
+ * @param delim is the delimeter between each field
+ */
+void team::read_team(char delim)
+{
+    getline(cin, school_name, delim);
+    wins = integer_input_throw(cin, "Invalid wins, please re-enter", 0);
+    cin.ignore();
+    losses = integer_input_throw(cin, "Invalid losses, please re-enter", 0);
+    cin.ignore();
+    ties = integer_input_throw(cin, "Invalid ties, please re-enter", 0);
+    cin.ignore();
+    seed = integer_input_throw(cin, "Invalid seed, please re-enter", 0);
 }
 
 

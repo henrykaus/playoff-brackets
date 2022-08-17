@@ -33,6 +33,7 @@ class team : protected utils
         bool same_name(const std::string &) const;  // Checks for match with arg
         void print_for_file(std::ostream &) const;  // Prints team in file input format
         void read_team(std::istream &, char delim); // Reads team from file input
+        void read_team(char delim);             // Reads team from user input
         void set_team(std::string, int, int, int, int); // Setter for all elements
         void edit_team();                       // Edit team via input from user
 
