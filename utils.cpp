@@ -50,6 +50,7 @@ int utils::integer_input(std::istream & in, const char * _err_msg, int _min, int
     return number;
 }
 
+
 /**
  * @brief Gets input for an integer
  * 
@@ -76,6 +77,7 @@ int utils::integer_input_throw(std::istream & in, const char * _err_msg, int _mi
 
     return number;
 }
+
 
 /**
  * @brief Gets a character from user and return the uppercase variant.

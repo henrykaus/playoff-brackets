@@ -9,14 +9,14 @@
 #include "bracket.h"
 using namespace std;
 
-// Default Constructor
+// Default constructor
 bracket::bracket() : root(nullptr)
 {
     init(32);
 }
 
 
-// Copy Constructor
+// Copy constructor
 bracket::bracket(const bracket & _source) : root(nullptr)
 {
     copy_bracket(_source);
@@ -57,14 +57,14 @@ void bracket::copy_bracket(node *& _dest_root, node * _source_root)
 }
 
 
-// Parameterized Constructor
+// Parameterized constructor
 bracket::bracket(int _bracket_teams) : root(nullptr)
 {
     init(_bracket_teams);
 }
 
 
-// Copy Assignment Operator
+// Copy assignment operator
 bracket & bracket::operator = (const bracket & _source)
 {
     if (this != &_source)
@@ -301,9 +301,9 @@ void bracket::init_bracket(const string & _file_name)
  * 
  * @param _ordered_teams is teams in a low-high sort based on seed
  * @param _size is the number of teams
- * @return is the teams in the seeded matchup order
+ * @return team **: the teams in the seeded matchup order
  */
-team ** bracket::order_comp_bracket(team ** _ordered_teams, int _size)              // TODO: Is the return even necessary?
+team ** bracket::order_comp_bracket(team ** _ordered_teams, int _size)
 {
     int group_size = 1;    // How many teams are shifting
     int i, target_index;   // Iterators
@@ -600,7 +600,8 @@ void bracket::user_advance_winner()
  * @brief a wrapper to search the bracket for a team to advance
  * 
  * @param _rank is the rank of the team to search for
- * @return if the team has been advanced
+ * @return true if the team has been advanced
+ * @return false if the team has not been found or cannot be advanced
  */
 bool bracket::search_and_decide(int _rank)
 {
@@ -618,7 +619,8 @@ bool bracket::search_and_decide(int _rank)
  * @param _parent is where the team would be advanced to
  * @param _dir (L/R) which direction was just traveled
  * @param _rank is the rank to look for
- * @return if the team had been advanced
+ * @return true if the team had been advanced
+ * @return false if the team has not been found or cannot be advanced
  */
 bool bracket::search_and_decide(node * _root, node * _parent, char _dir, int _rank)
 {

@@ -107,7 +107,7 @@ void bracket_creator::input_teams()
             if (!quit) this->add_team(team_to_add);
             successful_input = true;
         }
-        catch(invalid_argument err)
+        catch(const invalid_argument & err)
         {
             cout << err.what() << endl;
             successful_input = false;

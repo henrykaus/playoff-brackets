@@ -23,7 +23,7 @@ class node
         node(const node &);                     // Copy constructor
         node(const std::pair<team, team> &);    // Param. constructor
 
-        node & operator = (const node &);       // Copy assignment op.
+        node & operator = (const node &);       // Copy assignment operator
 
         void set_left(node *);                  // Set left pointer
         void set_right(node *);                 // Set right pointer
